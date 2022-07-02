@@ -1,0 +1,1 @@
+"source\struct.c" BROWSE INCDIR(.\inc) DEBUG OBJECTEXTEND PRINT(.\list\struct.lst) TABS (2) OBJECT(.\output\struct.obj)

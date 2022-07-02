@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "hall.H": "cpp",
+        "Key.H": "cpp",
+        "STC15F2K60S2.H": "cpp",
+        "common_include.h": "c",
+        "callback.h": "c"
+    },
+    "files.encoding": "gb2312"
+}

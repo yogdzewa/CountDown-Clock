@@ -1,0 +1,86 @@
+C51 COMPILER V9.60.0.0   MAIN_LOOP                                                         07/02/2022 00:48:28 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN_LOOP
+OBJECT MODULE PLACED IN .\output\main_loop.obj
+COMPILER INVOKED BY: E:\Keil_v5\C51\BIN\C51.EXE source\main_loop.c OPTIMIZE(8,SPEED) INCDIR(.\inc) PRINT(.\list\main_loo
+                    -p.lst) TABS(2) OBJECT(.\output\main_loop.obj)
+
+line level    source
+
+   1          #include "main_loop.h"
+   2          #include "callback.h"
+   3          #include "help_func.h"
+   4          #include "display_decode.h"
+   5          uint led_acc = 0;
+   6          uchar led_seq_flag;
+   7          // uchar light_array[3];
+   8          void LED_rotate_disp()
+   9          {
+  10   1          led_acc++;
+  11   1          LedPrint(time_out_flag & startup_flag ? led_pos : 0);
+  12   1          delay_ms(1);
+  13   1          if (led_acc >= 20)
+  14   1          {
+  15   2              if (led_pos == 0x80 || led_pos == 0x01)
+  16   2                  led_seq_flag = led_seq_flag ^ 0x01;
+  17   2              if (led_seq_flag)
+  18   2                  led_pos = _crol_(led_pos, 1);
+  19   2              else
+  20   2                  led_pos = _cror_(led_pos, 1);
+  21   2              led_acc = 0;
+  22   2          }
+  23   1      }
+  24          
+  25          #define dec_l(n) light##_array[n]
+  26          #define dec_t(n) timer##_array[n]
+  27          void SEG_disp()
+  28          {
+  29   1          if (!startup_flag)
+  30   1          {
+  31   2              Seg7Print(36, 36, 36, 36, 36, 36, 36, 36);
+  32   2              return;
+  33   2          }
+  34   1          if (seg_rop_flag == 1)
+  35   1          {
+  36   2              Seg7Print(dec_l(2), dec_l(1), dec_l(0), 36, 36, dec_l(5), dec_l(4), dec_l(3));
+  37   2              return;
+  38   2          }
+  39   1          if (seg_time_adjust_flag)
+  40   1          {
+  41   2              Seg7Print(
+  42   2                  TIME_RELD_H / 10, TIME_RELD_H % 10, 37,
+  43   2                  TIME_RELD_M / 10, TIME_RELD_M % 10, 37,
+  44   2                  TIME_RELD_S / 10, TIME_RELD_S % 10);
+  45   2              return;
+  46   2          }
+  47   1          if (rest_time_adjust_flag)
+  48   1          {
+  49   2              Seg7Print(
+  50   2                  36, 36, 37,
+  51   2                  TIME_REST_M / 10, TIME_REST_M % 10, 37,
+  52   2                  0, 0);
+  53   2              return;
+  54   2          }
+C51 COMPILER V9.60.0.0   MAIN_LOOP                                                         07/02/2022 00:48:28 PAGE 2   
+
+  55   1          // for timer display
+  56   1          if (!rest_flag)
+  57   1              Seg7Print(dec_t(5), dec_t(4), 36, dec_t(3), dec_t(2), 36, dec_t(1), dec_t(0));
+  58   1          else
+  59   1              Seg7Print(36, 36, 36, dec_t(3), dec_t(2), 36, dec_t(1), dec_t(0));
+  60   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    296    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

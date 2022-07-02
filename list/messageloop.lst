@@ -1,0 +1,34 @@
+C51 COMPILER V9.60.0.0   MESSAGELOOP                                                       06/22/2022 16:10:30 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MESSAGELOOP
+OBJECT MODULE PLACED IN .\output\messageloop.obj
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE source\messageloop.c OPTIMIZE(8,SPEED) INCDIR(.\inc) PRINT(.\
+                    -list\messageloop.lst) TABS(2) OBJECT(.\output\messageloop.obj)
+
+line level    source
+
+   1          #include "messageloop.h"
+   2          
+   3          void message_loop()
+   4          {
+   5   1          MySTC_Init();
+   6   1          while(1)
+   7   1          {
+   8   2              MySTC_OS();
+   9   2          }
+  10   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =      8    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

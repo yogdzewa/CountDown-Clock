@@ -1,0 +1,1 @@
+"source\display_decode.c" OPTIMIZE (8,SPEED) INCDIR(.\inc) PRINT(.\list\display_decode.lst) TABS (2) OBJECT(.\output\display_decode.obj)
