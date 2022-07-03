@@ -1,5 +1,6 @@
 #include "init.h"
 #include "callback.h"
+#include "help_func.h"
 code unsigned long SysClock = 11059200;
 
 void disp_init()
@@ -21,13 +22,22 @@ void date_init(u_byte y, u_byte mon, u_byte d, u_byte h, u_byte min, u_byte s, u
     time.minute = min;
     time.second = s;
     time.week = week;
+    TIME_RELD_H = M24C02_Read(0);
+    TIME_RELD_M = M24C02_Read(1);
+    TIME_RELD_S = M24C02_Read(2);
+    TIME_REST_M = M24C02_Read(3);
+    TIME_LIMIT_ALLSEC = TIME_RELD_H * 3600;
+    TIME_LIMIT_ALLSEC += TIME_RELD_M * 60;
+    TIME_LIMIT_ALLSEC += TIME_RELD_S;
 
     DS1302Init(time);
 }
 
 void global_init()
 {
-#if 1
+    // for uart1 init
+    Uart1Init(115200);
+
     // clock_cur = RTC_Read();
     // ADC and Navigation button
     AdcInit(ADCexpEXT);
@@ -46,5 +56,4 @@ void global_init()
 
     // Vibration detector
     VibInit();
-#endif
 }

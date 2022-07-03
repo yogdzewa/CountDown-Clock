@@ -1,5 +1,5 @@
 ".\output\main.obj",
-".\source\STCBSP_V3.5a.LIB",
+".\source\STCBSP_V3.5a.LIB"(ADC,BEEP,DISPLAYER,KEY,SYS,VIB,DS1302,M24C02,UART1),
 ".\output\STARTUP.obj",
 ".\output\init.obj",
 ".\output\display_decode.obj",

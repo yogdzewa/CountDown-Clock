@@ -1,1 +1,1 @@
-"source\init.c" OPTIMIZE (8,SPEED) INCDIR(.\inc) PRINT(.\list\init.lst) TABS (2) OBJECT(.\output\init.obj)
+"source\init.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\inc) DEBUG OBJECTEXTEND PRINT(.\list\init.lst) TABS (2) OBJECT(.\output\init.obj)

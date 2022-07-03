@@ -1,1 +1,1 @@
-"source\internal_callback.c" OPTIMIZE (8,SPEED) INCDIR(.\inc) PRINT(.\list\internal_callback.lst) TABS (2) OBJECT(.\output\internal_callback.obj)
+"source\internal_callback.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\inc) DEBUG OBJECTEXTEND PRINT(.\list\internal_callback.lst) TABS (2) OBJECT(.\output\internal_callback.obj)

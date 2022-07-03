@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   INTERNAL_CALLBACK                                                 07/02/2022 00:48:28 PAGE 1   
+C51 COMPILER V9.60.0.0   INTERNAL_CALLBACK                                                 07/03/2022 23:33:31 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE INTERNAL_CALLBACK
 OBJECT MODULE PLACED IN .\output\internal_callback.obj
-COMPILER INVOKED BY: E:\Keil_v5\C51\BIN\C51.EXE source\internal_callback.c OPTIMIZE(8,SPEED) INCDIR(.\inc) PRINT(.\list\
-                    -internal_callback.lst) TABS(2) OBJECT(.\output\internal_callback.obj)
+COMPILER INVOKED BY: E:\Keil_v5\C51\BIN\C51.EXE source\internal_callback.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\inc) DEBUG 
+                    -OBJECTEXTEND PRINT(.\list\internal_callback.lst) TABS(2) OBJECT(.\output\internal_callback.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   52   1          BUTTON_DISPATCH(enumAdcNavKeyDown, on_downbtn_up, on_downbtn_down);
   53   1          BUTTON_DISPATCH(enumAdcNavKeyUp, on_upbtn_up, on_upbtn_down);
   54   1          BUTTON_DISPATCH(enumAdcNavKeyLeft, on_leftbtn_up, on_leftbtn_down);
-C51 COMPILER V9.60.0.0   INTERNAL_CALLBACK                                                 07/02/2022 00:48:28 PAGE 2   
+C51 COMPILER V9.60.0.0   INTERNAL_CALLBACK                                                 07/03/2022 23:33:31 PAGE 2   
 
   55   1          BUTTON_DISPATCH(enumAdcNavKeyRight, on_rightbtn_up, on_rightbtn_down);
   56   1      }

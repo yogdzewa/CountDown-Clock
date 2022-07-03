@@ -1,1 +1,1 @@
-"source\help_func.c" OPTIMIZE (8,SPEED) INCDIR(.\inc) PRINT(.\list\help_func.lst) TABS (2) OBJECT(.\output\help_func.obj)
+"source\help_func.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\inc) DEBUG OBJECTEXTEND PRINT(.\list\help_func.lst) TABS (2) OBJECT(.\output\help_func.obj)

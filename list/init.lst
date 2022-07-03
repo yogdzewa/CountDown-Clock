@@ -1,69 +1,78 @@
-C51 COMPILER V9.60.0.0   INIT                                                              07/02/2022 00:48:28 PAGE 1   
+C51 COMPILER V9.60.0.0   INIT                                                              07/03/2022 23:32:45 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE INIT
 OBJECT MODULE PLACED IN .\output\init.obj
-COMPILER INVOKED BY: E:\Keil_v5\C51\BIN\C51.EXE source\init.c OPTIMIZE(8,SPEED) INCDIR(.\inc) PRINT(.\list\init.lst) TAB
-                    -S(2) OBJECT(.\output\init.obj)
+COMPILER INVOKED BY: E:\Keil_v5\C51\BIN\C51.EXE source\init.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\inc) DEBUG OBJECTEXTEND 
+                    -PRINT(.\list\init.lst) TABS(2) OBJECT(.\output\init.obj)
 
 line level    source
 
    1          #include "init.h"
    2          #include "callback.h"
-   3          code unsigned long SysClock = 11059200;
-   4          
-   5          void disp_init()
-   6          {
-   7   1          LedPrint(0);
-   8   1          DisplayerInit();
-   9   1          LedPrint(0);
-  10   1          SetDisplayerArea(0, 7);
-  11   1          Seg7Print(36, 36, 36, 36, 36, 36, 36, 36); // display off
-  12   1      }
-  13          
-  14          void date_init(u_byte y, u_byte mon, u_byte d, u_byte h, u_byte min, u_byte s, u_byte week)
-  15          {
-  16   1          struct_DS1302_RTC time;
-  17   1          time.year = y;
-  18   1          time.month = mon;
-  19   1          time.day = d;
-  20   1          time.hour = h;
-  21   1          time.minute = min;
-  22   1          time.second = s;
-  23   1          time.week = week;
-  24   1      
-  25   1          DS1302Init(time);
-  26   1      }
-  27          
-  28          void global_init()
-  29          {
-  30   1      #if 1
-  31   1          // clock_cur = RTC_Read();
-  32   1          // ADC and Navigation button
-  33   1          AdcInit(ADCexpEXT);
-  34   1      
-  35   1          // Buzzer
-  36   1          BeepInit();
-  37   1      
-  38   1          // Display & LEDs
-  39   1          disp_init();
+   3          #include "help_func.h"
+   4          code unsigned long SysClock = 11059200;
+   5          
+   6          void disp_init()
+   7          {
+   8   1          LedPrint(0);
+   9   1          DisplayerInit();
+  10   1          LedPrint(0);
+  11   1          SetDisplayerArea(0, 7);
+  12   1          Seg7Print(36, 36, 36, 36, 36, 36, 36, 36); // display off
+  13   1      }
+  14          
+  15          void date_init(u_byte y, u_byte mon, u_byte d, u_byte h, u_byte min, u_byte s, u_byte week)
+  16          {
+  17   1          struct_DS1302_RTC time;
+  18   1          time.year = y;
+  19   1          time.month = mon;
+  20   1          time.day = d;
+  21   1          time.hour = h;
+  22   1          time.minute = min;
+  23   1          time.second = s;
+  24   1          time.week = week;
+  25   1          TIME_RELD_H = M24C02_Read(0);
+  26   1          TIME_RELD_M = M24C02_Read(1);
+  27   1          TIME_RELD_S = M24C02_Read(2);
+  28   1          TIME_REST_M = M24C02_Read(3);
+  29   1          TIME_LIMIT_ALLSEC = TIME_RELD_H * 3600;
+  30   1          TIME_LIMIT_ALLSEC += TIME_RELD_M * 60;
+  31   1          TIME_LIMIT_ALLSEC += TIME_RELD_S;
+  32   1      
+  33   1          DS1302Init(time);
+  34   1      }
+  35          
+  36          void global_init()
+  37          {
+  38   1          // for uart1 init
+  39   1          Uart1Init(115200);
   40   1      
-  41   1          // Persistent Clock & Storage
-  42   1          date_init(2022, 7, 1, 0, 0, 0, 1);
-  43   1      
-  44   1          // Buttons
-  45   1          Key_Init();
-  46   1      
-  47   1          // Vibration detector
-  48   1          VibInit();
-  49   1      #endif
-  50   1      }
+  41   1          // clock_cur = RTC_Read();
+  42   1          // ADC and Navigation button
+  43   1          AdcInit(ADCexpEXT);
+  44   1      
+  45   1          // Buzzer
+  46   1          BeepInit();
+  47   1      
+  48   1          // Display & LEDs
+  49   1          disp_init();
+  50   1      
+  51   1          // Persistent Clock & Storage
+  52   1          date_init(2022, 7, 1, 0, 0, 0, 1);
+  53   1      
+  54   1          // Buttons
+C51 COMPILER V9.60.0.0   INIT                                                              07/03/2022 23:32:45 PAGE 2   
+
+  55   1          Key_Init();
+  56   1      
+  57   1          // Vibration detector
+  58   1          VibInit();
+  59   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    120    ----
-C51 COMPILER V9.60.0.0   INIT                                                              07/02/2022 00:48:28 PAGE 2   
-
+   CODE SIZE        =    217    ----
    CONSTANT SIZE    =      4    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
