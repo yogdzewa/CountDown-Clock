@@ -18,6 +18,7 @@ typedef unsigned char uchar;
 // Processor support
 #include "inc/STC15F2K60S2.H"
 #include <intrins.h>
+#include <string.h>
 
 // Message support
 #include "inc/sys.h"

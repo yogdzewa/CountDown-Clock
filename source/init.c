@@ -36,7 +36,8 @@ void date_init(u_byte y, u_byte mon, u_byte d, u_byte h, u_byte min, u_byte s, u
 void global_init()
 {
     // for uart1 init
-    Uart1Init(115200);
+    Uart1Init(28800);
+    SetUart1Rxd(recvinfo, 6, "\xaa\x55", 2);
 
     // clock_cur = RTC_Read();
     // ADC and Navigation button

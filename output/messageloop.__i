@@ -1,1 +1,0 @@
-"source\messageloop.c" OPTIMIZE (8,SPEED) INCDIR(.\inc) PRINT(.\list\messageloop.lst) TABS (2) OBJECT(.\output\messageloop.obj)

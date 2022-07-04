@@ -1,1 +1,0 @@
-"source\user_callback.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\inc) DEBUG OBJECTEXTEND PRINT(.\list\user_callback.lst) TABS (2) OBJECT(.\output\user_callback.obj)

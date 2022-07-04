@@ -6,17 +6,10 @@ XDATA uchar TIME_RELD_M;
 XDATA uchar TIME_RELD_S;
 XDATA uchar TIME_REST_M;
 // used for countdown process
-// uchar TIME_LIMIT_hour = 0;
-// uchar TIME_LIMIT_minute = 50;
-// uchar TIME_LIMIT_second = 21;
 int TIME_LIMIT_ALLSEC;
-// tmp var and macros
+// tmp var
 int diff;
 int diff_t;
-// #define CLOCK_SAME_COND(ele) (base.##ele == cur.##ele)
-// #define CLKs_DIFF(ele) ((int)cur.##ele - (int)base.##ele)
-// #define CLK_LIMIT_DIFF(ele) (TIME_LIMIT_##ele - time_diff_tmp.##ele)
-// #define CNT_DOWN(ele, prv) ((CLK_LIMIT_DIFF(ele) < (uchar)60) ? CLK_LIMIT_DIFF(ele) : (time_diff_tmp.##prv--, ((uchar)60 + CLK_LIMIT_DIFF(ele))))
 
 void time_diff_count_down()
 {

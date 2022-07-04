@@ -4,7 +4,7 @@
 #include "display_decode.h"
 uint led_acc = 0;
 uchar led_seq_flag;
-// uchar light_array[3];
+//for timeout event
 void LED_rotate_disp()
 {
     led_acc++;
@@ -24,6 +24,7 @@ void LED_rotate_disp()
 
 #define dec_l(n) light##_array[n]
 #define dec_t(n) timer##_array[n]
+//for segment display
 void SEG_disp()
 {
     if (!startup_flag)

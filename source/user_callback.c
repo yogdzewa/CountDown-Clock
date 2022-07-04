@@ -28,7 +28,8 @@ bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
 pdata uchar nvm_write_cnt = 3;
-XDATA char info[2] = {0xff, 0x0a};
+XDATA uchar info[5] = {0xff, 0x01, 0x10, 0xf0, 0x0f};
+XDATA uchar recvinfo[5] = {0};
 // reset the timer start
 #undef pdata
 void on_btn1_down()
@@ -44,11 +45,13 @@ void on_btn1_down()
         TIME_LIMIT_ALLSEC = TIME_RELD_H * 3600;
         TIME_LIMIT_ALLSEC += TIME_RELD_M * 60;
         TIME_LIMIT_ALLSEC += TIME_RELD_S;
+        Uart1Print("NOML:", 5);
     }
     else
     {
         TIME_LIMIT_ALLSEC = TIME_REST_M * 60;
         TIME_LIMIT_ALLSEC += 5;
+        Uart1Print("REST:", 5);
     }
 }
 #define dec(s, n) s##_array[n]
@@ -62,7 +65,7 @@ void on_btn2_down()
 
     // for test uart
     // content: 0xa0 -> lockscreen
-    Uart1Print(info, (uint)1);
+    Uart1Print(info, (uint)4);
 }
 void on_btn2_up() { seg_rop_flag = 0; }
 void on_btn3_down()
@@ -90,12 +93,10 @@ void on_nav_down()
     }
     else
     {
-        // if ((startup_flag = ~startup_flag) == 1)
-        //     (CLK_DIV = CLK_DIV | 0x07), rest_flag = 0, on_btn1_down();
-        // else
-        //     CLK_DIV = CLK_DIV & 0xf8;
         if ((startup_flag = ~startup_flag) == 1)
             rest_flag = 0, on_btn1_down();
+        else
+            Uart1Print("STOP:", 5);
     }
 }
 #define TIME_INTERVAL 5
@@ -148,7 +149,7 @@ void on_rightbtn_down()
 #undef TIME_ABSTRACT
 void on_sensor_vib()
 {
-    // SetBeep(30, 1);
+    SetBeep(30, 1);
     if (!rest_flag)
         if (TIME_LIMIT_ALLSEC - 5 * 60 >= 0)
             TIME_LIMIT_ALLSEC -= 5 * 60;
@@ -189,7 +190,16 @@ void on_timer_100ms()
             if (time_diff_tmp.second == 0)
             {
                 time_stop_flag = 1;
-                SetBeep(10000, 1);
+                if (rest_flag)
+                {
+                    Uart1Print("RTOU:", 5); // rest TIMEOUT
+                    SetBeep(5000, 20);
+                }
+                else
+                {
+                    Uart1Print("NTOU:", 5); // normal TIMEOUT
+                    SetBeep(5000, 1);
+                }
             }
         }
     }
@@ -227,6 +237,14 @@ void on_event_adc()
     else
         adc_acc += adc_res.Rop;
 }
+void on_uart1_rx()
+{
+    // reset to reset countdown
+    if (!strncmp(recvinfo + 2, "RRST", 4))
+        rest_flag = 1, SetBeep(5000, 5), on_btn1_down();
+    else if (!strncmp(recvinfo + 2, "BEEP", 4))
+        SetBeep(5000, 140);
+}
 
 // void on_btn3_up() {}
 // void on_timer_1ms() {}
@@ -239,6 +257,5 @@ void on_btn1_up() {}
 // void on_leftbtn_up() {}
 // void on_rightbtn_up() {}
 // void on_ir_rx() {}
-// void on_uart1_rx() {}
 // void on_uart2_rx() {}
 // void on_sensor_hall() {}

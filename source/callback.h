@@ -34,6 +34,7 @@ extern bit seg_time_adjust_flag;
 extern bit rest_flag;
 extern bit rest_time_adjust_flag;
 extern bit startup_flag;
+extern XDATA uchar recvinfo[5];
 
 extern uchar TIME_LIMIT_hour;
 extern uchar TIME_LIMIT_minute;

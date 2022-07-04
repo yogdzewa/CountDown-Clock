@@ -1,6 +1,5 @@
-/list/*
-/output/*
-/.*/*
-*.lst
+/list
+/output
+/.*/
 *.bak
 *.uvgui.*
