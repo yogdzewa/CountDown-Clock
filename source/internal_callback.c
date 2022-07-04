@@ -1,5 +1,5 @@
 #include "callback.h"
-#define CALLBACK_CNT 5
+#define CALLBACK_CNT 6
 code callback_register all_callbacks[] = {
     // {enumEventSys1mS, on_timer_1ms},
     // {enumEventSys10mS, on_timer_10ms},
@@ -13,7 +13,7 @@ code callback_register all_callbacks[] = {
     {enumEventVib, on_sensor_vib},
 
     // {enumEventIrRxd, on_ir_rx},
-    // {enumEventUart1Rxd, on_uart1_rx},
+    {enumEventUart1Rxd, on_uart1_rx},
     // {enumEventUart2Rxd, on_uart2_rx},
 
     {enumEventXADC, on_event_adc}};

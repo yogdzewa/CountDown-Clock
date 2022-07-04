@@ -7,9 +7,12 @@ typedef struct
     uchar minute;
     uchar second;
 } struct_time_diff;
-extern xdata uchar TIME_REST_M;
+extern XDATA uchar TIME_RELD_H;
+extern XDATA uchar TIME_RELD_M;
+extern XDATA uchar TIME_RELD_S;
+extern XDATA uchar TIME_REST_M;
 
-void time_diff_count_down(struct_DS1302_RTC, struct_DS1302_RTC);
+void time_diff_count_down();
 void delay_ms(uint n);
 
 #endif

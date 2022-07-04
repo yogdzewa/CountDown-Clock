@@ -8,15 +8,15 @@ typedef struct
     u_byte event;
     void *callback;
 } callback_register;
-#define XDATA xdata
-#define uchar unsigned char
-#define uint unsigned int
+
 extern code callback_register all_callbacks[];
 extern uint time_cur;
 extern uchar led_pos;
 extern pdata struct_DS1302_RTC clock_base;
 extern pdata struct_DS1302_RTC clock_cur;
 extern bit set_time_flag;
+extern uint clock_base_totalsec;
+extern uint clock_cur_totalsec;
 extern pdata struct_ADC adc_res;
 extern uchar adc_cnt;
 extern uint adc_acc;
@@ -34,6 +34,7 @@ extern bit seg_time_adjust_flag;
 extern bit rest_flag;
 extern bit rest_time_adjust_flag;
 extern bit startup_flag;
+extern XDATA uchar recvinfo[5];
 
 extern uchar TIME_LIMIT_hour;
 extern uchar TIME_LIMIT_minute;
@@ -41,6 +42,7 @@ extern uchar TIME_LIMIT_second;
 extern XDATA uchar TIME_RELD_H;
 extern XDATA uchar TIME_RELD_M;
 extern XDATA uchar TIME_RELD_S;
+extern int TIME_LIMIT_ALLSEC;
 
 void init_callbacks();
 

@@ -3,10 +3,12 @@
 #include "display_decode.h"
 #include "callback.h"
 
-uint time_cur = 0;
+// uint time_cur = 0;
 uchar led_pos = 1;
 pdata struct_DS1302_RTC clock_base;
 pdata struct_DS1302_RTC clock_cur;
+uint clock_base_totalsec;
+uint clock_cur_totalsec;
 bit set_time_flag;
 pdata struct_ADC adc_res;
 uchar adc_cnt;
@@ -25,26 +27,31 @@ bit seg_time_adjust_flag;
 bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
+pdata uchar nvm_write_cnt = 3;
+XDATA uchar info[5] = {0xff, 0x01, 0x10, 0xf0, 0x0f};
+XDATA uchar recvinfo[5] = {0};
 // reset the timer start
+#undef pdata
 void on_btn1_down()
 {
     clock_base = RTC_Read();
     time_out_flag = 0;
     time_stop_flag = 0;
-    clock_base.second = ((clock_base.second & 0x70) >> 4) * 10 + (clock_base.second & 0x0F);
-    clock_base.minute = ((clock_base.minute & 0x70) >> 4) * 10 + (clock_base.minute & 0x0F);
-    clock_base.hour = ((clock_base.hour & 0x70) >> 4) * 10 + (clock_base.hour & 0x0F);
+    clock_base_totalsec = ((clock_base.second & 0x70) >> 4) * 10 + (clock_base.second & 0x0F);
+    clock_base_totalsec += (((clock_base.minute & 0x70) >> 4) * 10 + (clock_base.minute & 0x0F)) * 60;
+    clock_base_totalsec += (((clock_base.hour & 0x70) >> 4) * 10 + (clock_base.hour & 0x0F)) * 3600;
     if (!rest_flag)
     {
-        TIME_LIMIT_hour = TIME_RELD_H;
-        TIME_LIMIT_minute = TIME_RELD_M;
-        TIME_LIMIT_second = TIME_RELD_S;
+        TIME_LIMIT_ALLSEC = TIME_RELD_H * 3600;
+        TIME_LIMIT_ALLSEC += TIME_RELD_M * 60;
+        TIME_LIMIT_ALLSEC += TIME_RELD_S;
+        Uart1Print("NOML:", 5);
     }
     else
     {
-        TIME_LIMIT_minute = TIME_REST_M;
-        TIME_LIMIT_hour = 0;
-        TIME_LIMIT_second = 21;
+        TIME_LIMIT_ALLSEC = TIME_REST_M * 60;
+        TIME_LIMIT_ALLSEC += 5;
+        Uart1Print("REST:", 5);
     }
 }
 #define dec(s, n) s##_array[n]
@@ -54,8 +61,11 @@ void on_btn2_down()
     light_array[2] = light_base / 100;
     light_array[1] = light_base % 100 / 10;
     light_array[0] = light_base % 10;
-    // Seg7Print(dec(light, 2), dec(light, 1), dec(light, 0), 36, dec(light, 5), dec(light, 4), dec(light, 3));
     seg_rop_flag = 1;
+
+    // for test uart
+    // content: 0xa0 -> lockscreen
+    Uart1Print(info, (uint)4);
 }
 void on_btn2_up() { seg_rop_flag = 0; }
 void on_btn3_down()
@@ -68,16 +78,25 @@ void on_nav_down()
     if (seg_time_adjust_flag || rest_time_adjust_flag)
     {
         seg_time_adjust_flag = rest_time_adjust_flag = 0;
+        // store TIME_RELD_** into M24C02
+        // H -> 0x00, M -> 0x01, S -> 0x02, REST_M -> 0x03
+        // the time interval is critical, so set the flag here
+        //(for time callback function to countdown)
+        M24C02_Write(0, TIME_RELD_H);
+        delay_ms(10);
+        M24C02_Write(1, TIME_RELD_M);
+        delay_ms(10);
+        M24C02_Write(2, TIME_RELD_S);
+        delay_ms(10);
+        M24C02_Write(3, TIME_REST_M);
         on_btn1_down();
     }
     else
     {
-        // if ((startup_flag = ~startup_flag) == 1)
-        //     (CLK_DIV = CLK_DIV | 0x07), rest_flag = 0, on_btn1_down();
-        // else
-        //     CLK_DIV = CLK_DIV & 0xf8;
         if ((startup_flag = ~startup_flag) == 1)
             rest_flag = 0, on_btn1_down();
+        else
+            Uart1Print("STOP:", 5);
     }
 }
 #define TIME_INTERVAL 5
@@ -128,17 +147,21 @@ void on_rightbtn_down()
 #undef RTIME_ADD
 #undef RTIME_ABSTRACT
 #undef TIME_ABSTRACT
-#define TIME_ABSTRACT (TIME_LIMIT_minute - TIME_INTERVAL)
-#define RTIME_ABSTRACT (TIME_LIMIT_minute - RTIME_INTERVAL)
-#define TIME_ADD (TIME_LIMIT_minute + TIME_INTERVAL)
-#define RTIME_ADD (TIME_LIMIT_minute + RTIME_INTERVAL)
 void on_sensor_vib()
 {
-    SetBeep(40, 1);
+    SetBeep(30, 1);
     if (!rest_flag)
-        TIME_LIMIT_minute = (TIME_ABSTRACT < (uchar)60) ? TIME_ABSTRACT : ((TIME_LIMIT_hour ? (TIME_LIMIT_hour--, (TIME_ABSTRACT + (uchar)60)) : 0));
+        if (TIME_LIMIT_ALLSEC - 5 * 60 >= 0)
+            TIME_LIMIT_ALLSEC -= 5 * 60;
+        else
+            TIME_LIMIT_ALLSEC %= 60;
     else
-        TIME_LIMIT_minute = (RTIME_ABSTRACT < (uchar)60) ? RTIME_ABSTRACT : (RTIME_ABSTRACT + (uchar)60);
+    {
+        if (TIME_LIMIT_ALLSEC - 2 * 60 >= 0)
+            TIME_LIMIT_ALLSEC -= 2 * 60;
+        else
+            TIME_LIMIT_ALLSEC %= 60;
+    }
 }
 // read real time clock, and reverse the led(for test function)
 void on_timer_100ms()
@@ -148,11 +171,11 @@ void on_timer_100ms()
     if (!time_stop_flag)
     {
         clock_cur = RTC_Read();
-        clock_cur.second = ((clock_cur.second & 0x70) >> 4) * 10 + (clock_cur.second & 0x0F);
-        clock_cur.minute = ((clock_cur.minute & 0x70) >> 4) * 10 + (clock_cur.minute & 0x0F);
-        clock_cur.hour = ((clock_cur.hour & 0x70) >> 4) * 10 + (clock_cur.hour & 0x0F);
+        clock_cur_totalsec = ((clock_cur.second & 0x70) >> 4) * 10 + (clock_cur.second & 0x0F);
+        clock_cur_totalsec += (((clock_cur.minute & 0x70) >> 4) * 10 + (clock_cur.minute & 0x0F)) * 60;
+        clock_cur_totalsec += (((clock_cur.hour & 0x70) >> 4) * 10 + (clock_cur.hour & 0x0F)) * 3600;
         // following function modifies @time_diff_tmp variable
-        time_diff_count_down(clock_base, clock_cur);
+        time_diff_count_down();
         timer_array[1] = time_diff_tmp.second / 10;
         timer_array[0] = time_diff_tmp.second % 10;
 
@@ -167,7 +190,16 @@ void on_timer_100ms()
             if (time_diff_tmp.second == 0)
             {
                 time_stop_flag = 1;
-                SetBeep(10000, 1);
+                if (rest_flag)
+                {
+                    Uart1Print("RTOU:", 5); // rest TIMEOUT
+                    SetBeep(5000, 20);
+                }
+                else
+                {
+                    Uart1Print("NTOU:", 5); // normal TIMEOUT
+                    SetBeep(5000, 1);
+                }
             }
         }
     }
@@ -180,9 +212,9 @@ void on_timer_100ms()
         {
             time_out_flag = 0;
             if (!rest_flag)
-                TIME_LIMIT_minute = (TIME_ADD < (uchar)60) ? TIME_ADD : (TIME_LIMIT_hour++, (TIME_ADD - (uchar)60));
+                TIME_LIMIT_ALLSEC += 5 * 60;
             else
-                TIME_LIMIT_minute = (RTIME_ADD < (uchar)60) ? RTIME_ADD : (RTIME_ADD - (uchar)60);
+                TIME_LIMIT_ALLSEC += 2 * 60;
         }
         else if (light_acc >= 7)
             rest_flag = ~rest_flag, on_btn1_down();
@@ -205,6 +237,14 @@ void on_event_adc()
     else
         adc_acc += adc_res.Rop;
 }
+void on_uart1_rx()
+{
+    // reset to reset countdown
+    if (!strncmp(recvinfo + 2, "RRST", 4))
+        rest_flag = 1, SetBeep(5000, 5), on_btn1_down();
+    else if (!strncmp(recvinfo + 2, "BEEP", 4))
+        SetBeep(400, 100);
+}
 
 // void on_btn3_up() {}
 // void on_timer_1ms() {}
@@ -217,6 +257,5 @@ void on_btn1_up() {}
 // void on_leftbtn_up() {}
 // void on_rightbtn_up() {}
 // void on_ir_rx() {}
-// void on_uart1_rx() {}
 // void on_uart2_rx() {}
 // void on_sensor_hall() {}
