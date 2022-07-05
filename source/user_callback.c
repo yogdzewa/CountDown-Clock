@@ -2,8 +2,7 @@
 #include "help_func.h"
 #include "display_decode.h"
 #include "callback.h"
-//test conflicts
-//test for local branch merge
+//test for ssl verify
 // uint time_cur = 0;
 uchar led_pos = 1;
 pdata struct_DS1302_RTC clock_base;
