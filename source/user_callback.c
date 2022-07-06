@@ -63,10 +63,6 @@ void on_btn2_down()
     light_array[1] = light_base % 100 / 10;
     light_array[0] = light_base % 10;
     seg_rop_flag = 1;
-
-    // for test uart
-    // content: 0xa0 -> lockscreen
-    // Uart1Print(info, (uint)4);
 }
 void on_btn2_up() { seg_rop_flag = 0; }
 void on_btn3_down()
@@ -162,7 +158,7 @@ void on_sensor_vib()
             TIME_LIMIT_ALLSEC %= 60;
     }
 }
-// read real time clock, and reverse the led(for test function)
+// read real time clock, and calc the diff time.
 void on_timer_100ms()
 {
     if (!startup_flag)
@@ -238,9 +234,10 @@ void on_event_adc()
 }
 void on_uart1_rx()
 {
-    // reset to reset countdown
+    // reset to rest countdown
     if (!strncmp(recvinfo + 2, "RRST", 4))
         rest_flag = 1, SetBeep(5000, 5), on_btn1_down();
+    //beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
         SetBeep(400, 100);
 }
