@@ -2,8 +2,6 @@
 #include "help_func.h"
 #include "display_decode.h"
 #include "callback.h"
-//test for ssl verify
-// uint time_cur = 0;
 uchar led_pos = 1;
 pdata struct_DS1302_RTC clock_base;
 pdata struct_DS1302_RTC clock_cur;
@@ -28,10 +26,13 @@ bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
 pdata uchar nvm_write_cnt = 3;
-XDATA uchar info[5] = {0xff, 0x01, 0x10, 0xf0, 0x0f};
 XDATA uchar recvinfo[5] = {0};
+// used for reset value
+XDATA uchar TIME_RELD_H;
+XDATA uchar TIME_RELD_M;
+XDATA uchar TIME_RELD_S;
+XDATA uchar TIME_REST_M;
 // reset the timer start
-#undef pdata
 void on_btn1_down()
 {
     clock_base = RTC_Read();
@@ -65,7 +66,7 @@ void on_btn2_down()
 
     // for test uart
     // content: 0xa0 -> lockscreen
-    Uart1Print(info, (uint)4);
+    // Uart1Print(info, (uint)4);
 }
 void on_btn2_up() { seg_rop_flag = 0; }
 void on_btn3_down()
@@ -80,8 +81,7 @@ void on_nav_down()
         seg_time_adjust_flag = rest_time_adjust_flag = 0;
         // store TIME_RELD_** into M24C02
         // H -> 0x00, M -> 0x01, S -> 0x02, REST_M -> 0x03
-        // the time interval is critical, so set the flag here
-        //(for time callback function to countdown)
+        // the time interval is critical, so use delay function.
         M24C02_Write(0, TIME_RELD_H);
         delay_ms(10);
         M24C02_Write(1, TIME_RELD_M);
@@ -135,7 +135,6 @@ void on_leftbtn_down()
 }
 void on_rightbtn_down()
 {
-    // SetBeep(8000, 5);
     if (rest_time_adjust_flag | seg_time_adjust_flag)
     {
         rest_time_adjust_flag = seg_time_adjust_flag;
@@ -203,7 +202,7 @@ void on_timer_100ms()
             }
         }
     }
-    // judge rop diff
+    // judge Rop diff
     if (((int)light_base - (int)light_cur > 10))
         light_acc++;
     else

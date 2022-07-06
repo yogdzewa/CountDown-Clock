@@ -28,21 +28,17 @@ void init_callbacks()
 
 void __on_button()
 {
-    {
-        u_byte key2act = GetKeyAct(enumKey2);
-        if (key2act == enumKeyPress)
-            on_btn2_down();
-        else if (key2act == enumKeyRelease)
-            on_btn2_up();
-    }
+    u_byte keyact = GetKeyAct(enumKey2);
+    if (keyact == enumKeyPress)
+        on_btn2_down();
+    else if (keyact == enumKeyRelease)
+        on_btn2_up();
 
-    {
-        u_byte key1act = GetKeyAct(enumKey1);
-        if (key1act == enumKeyPress)
-            on_btn1_down();
-        else if (key1act == enumKeyRelease)
-            on_btn1_up();
-    }
+    keyact = GetKeyAct(enumKey1);
+    if (keyact == enumKeyPress)
+        on_btn1_down();
+    else if (keyact == enumKeyRelease)
+        on_btn1_up();
 }
 
 void __on_nav()

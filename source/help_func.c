@@ -1,10 +1,6 @@
 #include "help_func.h"
 #include "callback.h"
-// used for reset value
-XDATA uchar TIME_RELD_H;
-XDATA uchar TIME_RELD_M;
-XDATA uchar TIME_RELD_S;
-XDATA uchar TIME_REST_M;
+
 // used for countdown process
 int TIME_LIMIT_ALLSEC;
 // tmp var
