@@ -26,7 +26,7 @@ bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
 pdata uchar nvm_write_cnt = 3;
-XDATA uchar recvinfo[5] = {0};
+XDATA uchar recvinfo[10] = {0};
 // used for reset value
 XDATA uchar TIME_RELD_H;
 XDATA uchar TIME_RELD_M;
@@ -36,8 +36,7 @@ XDATA uchar TIME_REST_M;
 void on_btn1_down()
 {
     clock_base = RTC_Read();
-    time_out_flag = 0;
-    time_stop_flag = 0;
+    time_out_flag = time_stop_flag = 0;
     clock_base_totalsec = ((clock_base.second & 0x70) >> 4) * 10 + (clock_base.second & 0x0F);
     clock_base_totalsec += (((clock_base.minute & 0x70) >> 4) * 10 + (clock_base.minute & 0x0F)) * 60;
     clock_base_totalsec += (((clock_base.hour & 0x70) >> 4) * 10 + (clock_base.hour & 0x0F)) * 3600;
@@ -237,7 +236,7 @@ void on_uart1_rx()
     // reset to rest countdown
     if (!strncmp(recvinfo + 2, "RRST", 4))
         rest_flag = 1, SetBeep(5000, 5), on_btn1_down();
-    //beep for a relative long time.
+    // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
         SetBeep(400, 100);
 }

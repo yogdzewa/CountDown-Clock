@@ -9,19 +9,19 @@ code char decode_table[] = {
     0x00, 0x80                                                        //[36]      : Whitespace
 };
 
-char ch_to_index(char ch)
-{
-    if('0' <= ch && ch <= '9')
-        return ch - '0';
+// char ch_to_index(char ch)
+// {
+//     if('0' <= ch && ch <= '9')
+//         return ch - '0';
     
-    if('a' <= ch && ch <= 'z')
-        return ch - 'a' + 10;
+//     if('a' <= ch && ch <= 'z')
+//         return ch - 'a' + 10;
 
-    if('A' <= ch && ch <= 'A')
-        return ch - 'A';
+//     if('A' <= ch && ch <= 'A')
+//         return ch - 'A';
 
-    if(ch == ' ')
-        return 36;
+//     if(ch == ' ')
+//         return 36;
 		
-		return 36;
-}
+// 		return 36;
+// }
