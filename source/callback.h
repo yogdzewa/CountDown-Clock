@@ -34,6 +34,7 @@ extern bit seg_time_adjust_flag;
 extern bit rest_flag;
 extern bit rest_time_adjust_flag;
 extern bit startup_flag;
+extern bit light_sensor_flag;
 extern XDATA uchar recvinfo[10];
 
 extern XDATA uchar TIME_RELD_H;
@@ -46,11 +47,18 @@ void init_callbacks();
 
 //================
 
-#define BUTTON_DISPATCH(enumBtn, funcUp, funcDown) \
-    if (GetAdcNavAct(enumBtn) == enumKeyPress)     \
+#define BUTTON_DISPATCH(enumBtn, funcDown)     \
+    if (GetAdcNavAct(enumBtn) == enumKeyPress) \
         funcDown();
 // else if (GetAdcNavAct(enumBtn) == enumKeyRelease)
 //     funcUp();
+
+#define BUTTON_DISPATCH_WITH_UP(enumBtn, funcUp, funcDown) \
+    key_state = GetAdcNavAct(enumBtn);                           \
+    if (key_state == enumKeyPress)                               \
+        funcDown();                                        \
+    else if (key_state == enumKeyRelease)                        \
+        funcUp();
 
 void __on_button();
 void __on_nav();

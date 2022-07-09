@@ -43,10 +43,11 @@ void __on_button()
 
 void __on_nav()
 {
-    BUTTON_DISPATCH(enumAdcNavKey3, on_btn3_up, on_btn3_down);
-    BUTTON_DISPATCH(enumAdcNavKeyCenter, on_nav_up, on_nav_down);
-    BUTTON_DISPATCH(enumAdcNavKeyDown, on_downbtn_up, on_downbtn_down);
-    BUTTON_DISPATCH(enumAdcNavKeyUp, on_upbtn_up, on_upbtn_down);
-    BUTTON_DISPATCH(enumAdcNavKeyLeft, on_leftbtn_up, on_leftbtn_down);
-    BUTTON_DISPATCH(enumAdcNavKeyRight, on_rightbtn_up, on_rightbtn_down);
+    u_byte key_state;
+    BUTTON_DISPATCH(enumAdcNavKey3, on_btn3_down);
+    BUTTON_DISPATCH(enumAdcNavKeyCenter, on_nav_down);
+    BUTTON_DISPATCH_WITH_UP(enumAdcNavKeyDown, on_downbtn_up, on_downbtn_down);
+    BUTTON_DISPATCH(enumAdcNavKeyUp, on_upbtn_down);
+    BUTTON_DISPATCH(enumAdcNavKeyLeft, on_leftbtn_down);
+    BUTTON_DISPATCH(enumAdcNavKeyRight, on_rightbtn_down);
 }

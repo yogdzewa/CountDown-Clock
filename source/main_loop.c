@@ -29,33 +29,34 @@ void SEG_disp()
 {
     if (!startup_flag)
     {
-        Seg7Print(36, 36, 36, 36, 36, 36, 36, 36);
+        Seg7Print(20, 20, 20, 20, 20, 20, 20, 20);
         return;
     }
     if (seg_rop_flag == 1)
     {
-        Seg7Print(dec_l(2), dec_l(1), dec_l(0), 36, 36, dec_l(5), dec_l(4), dec_l(3));
+        Seg7Print(dec_l(2), dec_l(1), dec_l(0), 20, 20, dec_l(5), dec_l(4), dec_l(3));
         return;
     }
     if (seg_time_adjust_flag)
     {
         Seg7Print(
-            TIME_RELD_H / 10, TIME_RELD_H % 10, 37,
-            TIME_RELD_M / 10, TIME_RELD_M % 10, 37,
+            TIME_RELD_H / 10, TIME_RELD_H % 10, 21,
+            TIME_RELD_M / 10, TIME_RELD_M % 10, 21,
             TIME_RELD_S / 10, TIME_RELD_S % 10);
         return;
     }
     if (rest_time_adjust_flag)
     {
         Seg7Print(
-            36, 36, 37,
-            TIME_REST_M / 10, TIME_REST_M % 10, 37,
+            20, 20, 21,
+            TIME_REST_M / 10, TIME_REST_M % 10, 21,
             0, 0);
         return;
     }
     // for timer display
+    #define OFFSET light_sensor_flag * 10
     if (!rest_flag)
-        Seg7Print(dec_t(5), dec_t(4), 36, dec_t(3), dec_t(2), 36, dec_t(1), dec_t(0));
+        Seg7Print(dec_t(5), dec_t(4), 20, dec_t(3), dec_t(2), 20, dec_t(1), dec_t(0) + OFFSET);
     else
-        Seg7Print(36, 36, 36, dec_t(3), dec_t(2), 36, dec_t(1), dec_t(0));
+         Seg7Print(20, 20, 20, dec_t(3), dec_t(2), 20, dec_t(1), dec_t(0)+ OFFSET);
 }

@@ -25,6 +25,7 @@ bit seg_time_adjust_flag;
 bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
+bit light_sensor_flag = 1;
 pdata uchar nvm_write_cnt = 3;
 XDATA uchar recvinfo[10] = {0};
 // used for reset value
@@ -109,6 +110,17 @@ void on_downbtn_down()
     }
     else if (rest_time_adjust_flag)
         TIME_REST_M = (RTIME_ABSTRACT < (uchar)60) ? RTIME_ABSTRACT : ((uchar)60 + RTIME_ABSTRACT);
+    else
+    {
+        light_sensor_flag = ~light_sensor_flag;
+        if (light_sensor_flag)
+            on_btn2_down();
+    }
+}
+void on_downbtn_up()
+{
+    if (light_sensor_flag)
+        seg_rop_flag = 0;
 }
 void on_upbtn_down()
 {
@@ -198,25 +210,28 @@ void on_timer_100ms()
         }
     }
     // judge Rop diff
-    if (((int)light_base - (int)light_cur > 10))
-        light_acc++;
-    else
-    {
-        if (light_acc >= 2 && light_acc <= 6)
+    if (light_sensor_flag)
+        if (((int)light_base - (int)light_cur > 10))
+            light_acc++;
+        else
         {
-            time_out_flag = 0;
-            if (!rest_flag)
-                TIME_LIMIT_ALLSEC += 5 * 60;
-            else
-                TIME_LIMIT_ALLSEC += 2 * 60;
+            if (light_acc >= 2 && light_acc <= 6)
+            {
+                time_out_flag = 0;
+                if (!rest_flag)
+                    TIME_LIMIT_ALLSEC += 5 * 60;
+                else
+                    TIME_LIMIT_ALLSEC += 2 * 60;
+            }
+            else if (light_acc >= 7)
+                rest_flag = ~rest_flag, on_btn1_down();
+            light_acc = 0;
         }
-        else if (light_acc >= 7)
-            rest_flag = ~rest_flag, on_btn1_down();
-        light_acc = 0;
-    }
 }
 void on_event_adc()
 {
+    if (!light_sensor_flag)
+        return;
     adc_res = GetADC();
     adc_cnt++;
     if (adc_cnt == 30)
@@ -247,7 +262,6 @@ void on_uart1_rx()
 // void on_timer_1sec() {}
 void on_btn1_up() {}
 // void on_nav_up() {}
-// void on_downbtn_up() {}
 // void on_upbtn_up() {}
 // void on_leftbtn_up() {}
 // void on_rightbtn_up() {}
