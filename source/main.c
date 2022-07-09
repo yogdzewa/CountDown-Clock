@@ -14,7 +14,7 @@ void main()
 
 	MySTC_Init();
 	// delay_ms(20);
-	//init light base and clock base
+	//init light base and clock base and A/D interrupt priority.
 	clock_base = RTC_Read();
 	light_base = adc_res.Rop;
 	while (1)

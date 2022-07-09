@@ -230,9 +230,9 @@ void on_timer_100ms()
 }
 void on_event_adc()
 {
+    adc_res = GetADC();
     if (!light_sensor_flag)
         return;
-    adc_res = GetADC();
     adc_cnt++;
     if (adc_cnt == 30)
     {
