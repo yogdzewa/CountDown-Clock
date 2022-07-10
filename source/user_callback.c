@@ -131,6 +131,14 @@ void on_upbtn_down()
     }
     else if (rest_time_adjust_flag)
         TIME_REST_M = (RTIME_ADD < (uchar)60) ? RTIME_ADD : (RTIME_ADD - (uchar)60);
+    else // if (!light_sensor_flag)
+    {
+        time_out_flag = 0;
+        if (!rest_flag)
+            TIME_LIMIT_ALLSEC += 5 * 60;
+        else
+            TIME_LIMIT_ALLSEC += 2 * 60;
+    }
 }
 void on_leftbtn_down()
 {
@@ -139,6 +147,8 @@ void on_leftbtn_down()
         rest_time_adjust_flag = seg_time_adjust_flag;
         seg_time_adjust_flag = ~seg_time_adjust_flag;
     }
+    else
+        rest_flag = ~rest_flag, on_btn1_down();
 }
 void on_rightbtn_down()
 {
