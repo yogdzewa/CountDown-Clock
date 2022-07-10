@@ -90,7 +90,7 @@ void on_nav_down()
     else
     {
         if ((startup_flag = ~startup_flag) == 1)
-            rest_flag = 0, light_cur = light_base = adc_res.Rop, on_btn1_down();
+            rest_flag = 0, light_base = adc_res.Rop, on_btn1_down();
         else
             Uart1Print("STOP:", 5);
     }
