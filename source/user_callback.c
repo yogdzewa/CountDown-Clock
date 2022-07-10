@@ -58,7 +58,6 @@ void on_btn1_down()
 #define dec(s, n) s##_array[n]
 void on_btn2_down()
 { // set Rop light base
-    light_acc = 0;
     light_base = adc_res.Rop;
     light_array[2] = light_base / 100;
     light_array[1] = light_base % 100 / 10;
