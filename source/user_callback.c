@@ -58,7 +58,7 @@ void on_btn1_down()
 #define dec(s, n) s##_array[n]
 void on_btn2_down()
 { // set Rop light base
-    light_base = adc_res.Rop;
+    light_cur = light_base = adc_res.Rop;
     light_array[2] = light_base / 100;
     light_array[1] = light_base % 100 / 10;
     light_array[0] = light_base % 10;
@@ -90,7 +90,7 @@ void on_nav_down()
     else
     {
         if ((startup_flag = ~startup_flag) == 1)
-            rest_flag = 0, light_base = adc_res.Rop, on_btn1_down();
+            rest_flag = 0, light_cur = light_base = adc_res.Rop, on_btn1_down();
         else
             Uart1Print("STOP:", 5);
     }
