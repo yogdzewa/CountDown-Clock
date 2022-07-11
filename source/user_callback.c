@@ -26,9 +26,7 @@ bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
 bit light_sensor_flag = 1;
-pdata uchar nvm_write_cnt = 3;
 bit pc_connect_flag;
-// bit uart_recv_conn_flag; // uart message recved from pc flag
 XDATA uchar recvinfo[10] = {0};
 // used for reset value
 XDATA uchar TIME_RELD_H;
