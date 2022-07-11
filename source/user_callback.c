@@ -268,6 +268,15 @@ void on_uart1_rx()
     // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
         SetBeep(400, 100);
+    else if (!strncmp(recvinfo + 2, "TLIG", 4))
+    {
+        light_sensor_flag = ~light_sensor_flag;
+        if (light_sensor_flag)
+        {
+            light_acc = 0;
+            light_base = adc_res.Rop;
+        }
+    }
     else if (!strncmp(recvinfo + 2, "DISC", 4))
         pc_connect_flag = 0;
     else if (!strncmp(recvinfo + 2, "STOP", 4))

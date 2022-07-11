@@ -26,11 +26,14 @@ def shutdown_all(systray, pipe: Serial):
     pipe.write(b'\xaa\x55STOP')
     _exit(1)
 
+def toggle_light_sensor(systray, pipe: Serial):
+    pipe.write(b'\xaa\x55TLIG')
 
 def tray_create(serial_port: Serial):
     global systray
-    menu_options = (("Shutdown All", None, shutdown_all),)
+    menu_options = (("Shutdown All", None, shutdown_all),
+        ("Toggle light sensor", None, toggle_light_sensor))
     systray = SysTrayIcon("D:\\ico\\1.ico", "Countdown Clock",
-                          menu_options=menu_options, default_menu_index=1, on_quit=tray_exit,
+                          menu_options=menu_options, default_menu_index=2, on_quit=tray_exit,
                           tmp_arg=serial_port)
     systray.start()
