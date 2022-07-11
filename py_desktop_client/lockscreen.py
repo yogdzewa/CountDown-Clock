@@ -1,47 +1,15 @@
-import os
-import psutil
-import signal
-import pystray
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from tkinter import *
-from tkinter import messagebox
+# NOTICE: the tray icon is using absolute address in help_fucn.py
+
+from os import _exit
 import ctypes
-import serial
+from serial import SerialException, Serial
 from serial.tools import list_ports
 from time import sleep, time
-win = Tk()
-win.attributes('-topmost', True)
-win.withdraw()
-pipe = None
-
-def showinfo(msg):
-    messagebox.showinfo(title='NOTICE:',  message=msg, parent=win)
-def showwarning(msg):
-    messagebox.showwarning(title='WARN:', message=msg, parent=win)
-def showerror(msg):
-    messagebox.showerror(title='ERROR:', message=msg, parent=win)
-def askquestion(ques) -> str:
-    return messagebox.askquestion("QUESTTION:", ques, parent=win)
-def handler(signum, frame):
-    if signum == signal.SIGINT:
-        print('Signal INT received, now exit')
-        pipe.write(b'\xaa\x55DISC')
-        os._exit(1)
-def get_pid_by_name(process_name: str) -> list:
-    processPidList = []
-    for proc in psutil.process_iter():
-        if process_name in proc.name():
-            processPidList.append(proc.pid)
-    return processPidList
-def wait_for_signal(parent_pid):
-    child_pid = os.getpid()
-    return
-
+from help_func import *
+pipe : Serial
 
 def main():
     global pipe
-    # install signal handler
-    # signal.signal(signal.SIGINT, handler)
     ports_list = [x for x in list_ports.comports()
                  if 'USB-SERIAL CH340' in x.description]
     len_ports = len(ports_list)
@@ -50,25 +18,22 @@ def main():
             showerror('Not Found Existing CH340 COM!')
         elif len_ports > 1:
             showerror('Only Support One Connection!')
-        os._exit(1)
+        _exit(1)
     try:
-        pipe = serial.Serial(ports_list[0].name, 28800)
-    except BaseException:
+        pipe = Serial(ports_list[0].name, 28800)
+    except BaseException: # exit
         showerror(
-            f'{ports_list[0].name} permission denied!\nMaybe former process \
-is running.\nNow trying to kill it(include this one)')
-        pid_list = get_pid_by_name('pythonw.exe')
-        for pid in pid_list:
-            os.kill(pid, signal.SIGINT)
-        os._exit(1)  # prevent previous line not working
+            f'{ports_list[0].name} permission denied!\nMaybe other process \
+is running.\nNow exiting...')
+        _exit(1)  # prevent previous line not working
+
     header = b'\xaa\x55'
     pipe.write(header+b'CONN')
+    tray_create(serial_port=pipe)
     showinfo('Now the timer is RUNNING.')
-    pool = ProcessPoolExecutor(1)
-    pool.submit(wait_for_signal, os.getpid())
 
     while(True):
-        pipe.timeout = 2
+        pipe.timeout = None
         try:
             recvinfo = pipe.read_until(b':')
             if(recvinfo == None):
@@ -104,18 +69,19 @@ is running.\nNow trying to kill it(include this one)')
             elif(recvinfo == b'STOP:'):
                 showinfo('QUIT CURRENT PROCESS!')
                 pipe.write(header+b'DISC')
-                os._exit(1)
-        except serial.SerialException as err:
+                _exit(1)
+        except SerialException as err:
             if 'Permission' in err.args[0]:
                 showwarning(
                     f'{pipe.name} permission denied!\nmaybe disconnected from PC now.')
             else:
                 showerror(err)
-            os._exit(1)
+            _exit(1)
         except KeyboardInterrupt:
             showwarning('keyboardint in main()')
+            systray.shutdown()
             pipe.write(header+b'DISC')
-            os._exit(1)
+            _exit(1)
     
 #end of @main
 
