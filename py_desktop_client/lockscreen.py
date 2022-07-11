@@ -1,5 +1,8 @@
 import os
-import subprocess
+import psutil
+import signal
+import pystray
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from tkinter import *
 from tkinter import messagebox
 import ctypes
@@ -9,6 +12,7 @@ from time import sleep, time
 win = Tk()
 win.attributes('-topmost', True)
 win.withdraw()
+pipe = None
 
 def showinfo(msg):
     messagebox.showinfo(title='NOTICE:',  message=msg, parent=win)
@@ -18,8 +22,26 @@ def showerror(msg):
     messagebox.showerror(title='ERROR:', message=msg, parent=win)
 def askquestion(ques) -> str:
     return messagebox.askquestion("QUESTTION:", ques, parent=win)
+def handler(signum, frame):
+    if signum == signal.SIGINT:
+        print('Signal INT received, now exit')
+        pipe.write(b'\xaa\x55DISC')
+        os._exit(1)
+def get_pid_by_name(process_name: str) -> list:
+    processPidList = []
+    for proc in psutil.process_iter():
+        if process_name in proc.name():
+            processPidList.append(proc.pid)
+    return processPidList
+def wait_for_signal(parent_pid):
+    child_pid = os.getpid()
+    return
+
 
 def main():
+    global pipe
+    # install signal handler
+    # signal.signal(signal.SIGINT, handler)
     ports_list = [x for x in list_ports.comports()
                  if 'USB-SERIAL CH340' in x.description]
     len_ports = len(ports_list)
@@ -35,14 +57,22 @@ def main():
         showerror(
             f'{ports_list[0].name} permission denied!\nMaybe former process \
 is running.\nNow trying to kill it(include this one)')
-        subprocess.run('taskkill /f /fi "IMAGENAME eq lockscreen.exe"', shell=True)
-        os._exit(1) #prevent previous line not working
-    showinfo('Now the timer is RUNNING.')
+        pid_list = get_pid_by_name('pythonw.exe')
+        for pid in pid_list:
+            os.kill(pid, signal.SIGINT)
+        os._exit(1)  # prevent previous line not working
     header = b'\xaa\x55'
+    pipe.write(header+b'CONN')
+    showinfo('Now the timer is RUNNING.')
+    pool = ProcessPoolExecutor(1)
+    pool.submit(wait_for_signal, os.getpid())
+
     while(True):
-        pipe.timeout = None
+        pipe.timeout = 2
         try:
             recvinfo = pipe.read_until(b':')
+            if(recvinfo == None):
+                continue
             # print('recvinfo: ', recvinfo)
             if(recvinfo == b'NTOU:'):
                 pipe.timeout = 60
@@ -73,6 +103,7 @@ is running.\nNow trying to kill it(include this one)')
                     pipe.write(header+b'BEEP')
             elif(recvinfo == b'STOP:'):
                 showinfo('QUIT CURRENT PROCESS!')
+                pipe.write(header+b'DISC')
                 os._exit(1)
         except serial.SerialException as err:
             if 'Permission' in err.args[0]:
@@ -80,6 +111,10 @@ is running.\nNow trying to kill it(include this one)')
                     f'{pipe.name} permission denied!\nmaybe disconnected from PC now.')
             else:
                 showerror(err)
+            os._exit(1)
+        except KeyboardInterrupt:
+            showwarning('keyboardint in main()')
+            pipe.write(header+b'DISC')
             os._exit(1)
     
 #end of @main

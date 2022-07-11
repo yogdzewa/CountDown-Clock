@@ -27,6 +27,8 @@ bit rest_time_adjust_flag;
 bit startup_flag = 1;
 bit light_sensor_flag = 1;
 pdata uchar nvm_write_cnt = 3;
+bit pc_connect_flag;
+// bit uart_recv_conn_flag; // uart message recved from pc flag
 XDATA uchar recvinfo[10] = {0};
 // used for reset value
 XDATA uchar TIME_RELD_H;
@@ -180,6 +182,7 @@ void on_sensor_vib()
             TIME_LIMIT_ALLSEC %= 60;
     }
 }
+
 // read real time clock, and calc the diff time.
 void on_timer_100ms()
 {
@@ -259,12 +262,16 @@ void on_event_adc()
 }
 void on_uart1_rx()
 {
+    if (!strncmp(recvinfo + 2, "CONN", 4))
+        pc_connect_flag = 1;
     // reset to rest countdown
-    if (!strncmp(recvinfo + 2, "RRST", 4))
+    else if (!strncmp(recvinfo + 2, "RRST", 4))
         rest_flag = 1, SetBeep(5000, 5), on_btn1_down();
     // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
         SetBeep(400, 100);
+    else //if(!strncmp(recvinfo + 2, "DISC", 4))
+        pc_connect_flag = 0;
 }
 
 // void on_btn3_up() {}

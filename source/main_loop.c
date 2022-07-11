@@ -53,10 +53,11 @@ void SEG_disp()
             0, 0);
         return;
     }
+    #define LIGHT_OFF light_sensor_flag * 10
+    #define PC_OFF pc_connect_flag * 10
     // for timer display
-    #define OFFSET light_sensor_flag * 10
     if (!rest_flag)
-        Seg7Print(dec_t(5), dec_t(4), 20, dec_t(3), dec_t(2), 20, dec_t(1), dec_t(0) + OFFSET);
+        Seg7Print(dec_t(5), dec_t(4), 20, dec_t(3), dec_t(2) + PC_OFF, 20, dec_t(1), dec_t(0) + LIGHT_OFF);
     else
-         Seg7Print(20, 20, 20, dec_t(3), dec_t(2), 20, dec_t(1), dec_t(0)+ OFFSET);
+        Seg7Print(20, 20, 20, dec_t(3), dec_t(2) + PC_OFF, 20, dec_t(1), dec_t(0) + LIGHT_OFF);
 }

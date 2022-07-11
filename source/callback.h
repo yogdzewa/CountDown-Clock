@@ -35,6 +35,7 @@ extern bit rest_flag;
 extern bit rest_time_adjust_flag;
 extern bit startup_flag;
 extern bit light_sensor_flag;
+extern bit pc_connect_flag;
 extern XDATA uchar recvinfo[10];
 
 extern XDATA uchar TIME_RELD_H;
