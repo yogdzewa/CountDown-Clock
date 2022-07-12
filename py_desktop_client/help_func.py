@@ -1,3 +1,4 @@
+from time import sleep
 from tkinter import *
 from tkinter import messagebox
 from serial import Serial
@@ -30,6 +31,8 @@ def toggle_clock_switch(systray, pipe: Serial):
     pipe.write(b'\xaa\x55CONN')
 
 def toggle_light_sensor(systray, pipe: Serial):
+    pipe.write(b'\xaa\x55TLIG')
+    sleep(1.2)
     pipe.write(b'\xaa\x55TLIG')
 
 def change_mode(systray, pipe: Serial):

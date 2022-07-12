@@ -258,6 +258,7 @@ void on_event_adc()
     else
         adc_acc += adc_res.Rop;
 }
+bit tlig = 0;
 void on_uart1_rx()
 {
     if (!strncmp(recvinfo + 2, "CONN", 4))
@@ -279,11 +280,14 @@ void on_uart1_rx()
         SetBeep(400, 100);
     else if (!strncmp(recvinfo + 2, "TLIG", 4))
     {
-        light_sensor_flag = ~light_sensor_flag;
-        if (light_sensor_flag)
+        if (tlig)
+            tlig = ~tlig;
+        else
         {
-            light_acc = 0;
-            light_base = adc_res.Rop;
+            light_sensor_flag = !(light_sensor_flag ^ seg_rop_flag);
+            if (seg_rop_flag = !seg_rop_flag & light_sensor_flag)
+                on_btn2_down();
+            tlig = light_sensor_flag | seg_rop_flag ? 0 : 1;
         }
     }
     else if (!strncmp(recvinfo + 2, "DISC", 4))
