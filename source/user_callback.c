@@ -267,7 +267,7 @@ void on_uart1_rx()
             startup_flag = 1, rest_flag = light_acc = 0, light_base = adc_res.Rop, on_btn1_down();
     } // reset to rest countdown
     else if (!strncmp(recvinfo + 2, "RRST", 4))
-        rest_flag = 1, SetBeep(5000, 5), on_btn1_down();
+        rest_flag = ~rest_flag, SetBeep(5000, 5), on_btn1_down();
     // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
         SetBeep(400, 100);
