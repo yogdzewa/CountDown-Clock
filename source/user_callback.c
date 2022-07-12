@@ -262,9 +262,15 @@ void on_uart1_rx()
 {
     if (!strncmp(recvinfo + 2, "CONN", 4))
     {
+        // recv CONN when already connected or switch off, reset to normal mode
+        // and toggle switch
+        if (pc_connect_flag || !startup_flag)
+        {
+            if (!(pc_connect_flag && startup_flag)) // detect toggled swtich
+                rest_flag = light_acc = 0, light_base = adc_res.Rop, on_btn1_down();
+            startup_flag = ~startup_flag;
+        }
         pc_connect_flag = 1;
-        if (startup_flag == 0)
-            startup_flag = 1, rest_flag = light_acc = 0, light_base = adc_res.Rop, on_btn1_down();
     } // reset to rest countdown
     else if (!strncmp(recvinfo + 2, "RRST", 4))
         rest_flag = ~rest_flag, SetBeep(5000, 5), on_btn1_down();
