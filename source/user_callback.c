@@ -287,7 +287,7 @@ void on_uart1_rx()
             light_sensor_flag = !(light_sensor_flag ^ seg_rop_flag);
             if (seg_rop_flag = !seg_rop_flag & light_sensor_flag)
                 on_btn2_down();
-            tlig = light_sensor_flag | seg_rop_flag ? 0 : 1;
+            tlig = ~(light_sensor_flag | seg_rop_flag);
         }
     }
     else if (!strncmp(recvinfo + 2, "DISC", 4))
