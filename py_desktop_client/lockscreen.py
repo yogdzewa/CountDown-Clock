@@ -63,7 +63,7 @@ is running.\nNow exiting...')
                 while True:
                     recvinfo = pipe.read_until(b':')
                     # print('RTOU:', recvinfo)
-                    if recvinfo == b'NOML:':
+                    if recvinfo == b'NOML:' or recvinfo == b'REST':
                         break
                     pipe.write(header+b'BEEP')
             elif(recvinfo == b'STOP:'):
