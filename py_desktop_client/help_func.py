@@ -43,11 +43,12 @@ def reset(systray, pipe: Serial):
 
 def tray_create(serial_port: Serial):
     global systray
-    menu_options = (("Shutdown All", None, shutdown_all),
+    menu_options = (
+        ("Shutdown All", None, shutdown_all),
+        ("Reset", None, reset),
         ("Clock Switch", None, toggle_clock_switch),
         ("Light Sensor Switch", None, toggle_light_sensor),
-        ("Mode Change", None, change_mode), 
-        ("Reset", None, reset))
+        ("Mode Change", None, change_mode))
     systray = SysTrayIcon("D:\\ico\\1.ico", "Countdown Clock",
                           menu_options=menu_options, default_menu_index=5, on_quit=tray_exit,
                           tmp_arg=serial_port)
