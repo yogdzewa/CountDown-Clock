@@ -1,4 +1,5 @@
-# NOTICE: the tray icon is using absolute address in help_fucn.py
+# NOTICE: the tray icon and reboot path is using absolute address 
+# in help_fucn.py
 
 from os import _exit
 import ctypes

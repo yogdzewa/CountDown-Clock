@@ -1,8 +1,9 @@
+import subprocess
 from time import sleep
 from tkinter import *
 from tkinter import messagebox
 from serial import Serial
-from os import _exit
+from os import _exit, system
 from infi.systray import SysTrayIcon
 
 win = Tk()
@@ -41,15 +42,23 @@ def change_mode(systray, pipe: Serial):
 def reset(systray, pipe: Serial):
     pipe.write(b'\xaa\x55RSET')
 
+def reboot(systray, pipe: Serial):
+    pipe.write(b'\xaa\x55DISC')
+    pipe.close()
+    subprocess.Popen("F:\\zzzzzz\\term\\user_template\\py_desktop_client\\lockscreen.pyw", shell=True)
+    # system("F:\\zzzzzz\\term\\user_template\\py_desktop_client\\lockscreen.pyw\nexit")
+    _exit(0)
+
 def tray_create(serial_port: Serial):
     global systray
     menu_options = (
+        ("Reboot", None, reboot),
         ("Shutdown All", None, shutdown_all),
         ("Reset", None, reset),
         ("Clock Switch", None, toggle_clock_switch),
         ("Light Sensor Switch", None, toggle_light_sensor),
         ("Mode Change", None, change_mode))
     systray = SysTrayIcon("D:\\ico\\1.ico", "Countdown Clock",
-                          menu_options=menu_options, default_menu_index=5, on_quit=tray_exit,
+                          menu_options=menu_options, default_menu_index=6, on_quit=tray_exit,
                           tmp_arg=serial_port)
     systray.start()
