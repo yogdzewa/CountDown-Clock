@@ -46,7 +46,6 @@ def reboot(systray, pipe: Serial):
     pipe.write(b'\xaa\x55DISC')
     pipe.close()
     subprocess.Popen("F:\\zzzzzz\\term\\user_template\\py_desktop_client\\lockscreen.pyw", shell=True)
-    # system("F:\\zzzzzz\\term\\user_template\\py_desktop_client\\lockscreen.pyw\nexit")
     _exit(0)
 
 def tray_create(serial_port: Serial):
