@@ -52,8 +52,10 @@ is running.\nNow exiting...')
                 # print('choice: ', choice)
                 if(choice == 'yes'):
                     tmp = 240 - (time() - time_tmp)
-                    time_tmp = tmp if tmp > 0 else 0
-                    sleep(time_tmp)
+                    pipe.timeout = tmp if tmp > 0 else 0
+                    recvinfo = pipe.read_until(b':')
+                    if recvinfo != b'':
+                        continue
                     ctypes.windll.user32.LockWorkStation()
                     sleep(6)
                     pipe.write(header+b'RRST')
