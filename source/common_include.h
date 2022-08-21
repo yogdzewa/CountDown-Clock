@@ -15,6 +15,12 @@ typedef unsigned char uchar;
     #define xdata
     #define bit int
 #endif
+
+//for beep mode
+#define BEEP_MUTE
+
+
+
 // Processor support
 #include "inc/STC15F2K60S2.H"
 #include <intrins.h>

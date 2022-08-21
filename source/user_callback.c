@@ -211,12 +211,20 @@ void on_timer_100ms()
                 if (rest_flag)
                 {
                     Uart1Print("RTOU:", 5); // rest TIMEOUT
+#ifndef BEEP_MUTE
                     SetBeep(5000, 20);
+#else
+                    SetBeep(30, 2);
+#endif
                 }
                 else
                 {
                     Uart1Print("NTOU:", 5); // normal TIMEOUT
+#ifndef BEEP_MUTE
                     SetBeep(5000, 1);
+#else
+                    SetBeep(30, 2);
+#endif
                 }
             }
         }
@@ -274,12 +282,20 @@ void on_uart1_rx()
         pc_connect_flag = 1;
     } // reset to rest countdown
     else if (!strncmp(recvinfo + 2, "RRST", 4))
+#ifndef BEEP_MUTE
         rest_flag = ~rest_flag, SetBeep(5000, 5), on_btn1_down();
-    else if(!strncmp(recvinfo + 2, "RSET", 4))
+#else
+        rest_flag = ~rest_flag, SetBeep(30, 2), on_btn1_down();
+#endif
+    else if (!strncmp(recvinfo + 2, "RSET", 4))
         on_btn1_down();
     // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
+#ifndef BEEP_MUTE
         SetBeep(400, 100);
+#else
+        SetBeep(30, 2);
+#endif
     else if (!strncmp(recvinfo + 2, "TLIG", 4))
     {
         if (tlig)
