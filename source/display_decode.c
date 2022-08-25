@@ -9,20 +9,3 @@ code char decode_table[] = {
     // 0x75, 0x38, 0x37, 0x54, 0x5c, 0x73, 0x67, 0x31, 0x49, 0x78,
     // 0x3e, 0x1c, 0x7e, 0x64, 0x6e, 0x59,
 };
-
-// char ch_to_index(char ch)
-// {
-//     if('0' <= ch && ch <= '9')
-//         return ch - '0';
-
-//     if('a' <= ch && ch <= 'z')
-//         return ch - 'a' + 10;
-
-//     if('A' <= ch && ch <= 'A')
-//         return ch - 'A';
-
-//     if(ch == ' ')
-//         return 36;
-
-// 		return 36;
-// }

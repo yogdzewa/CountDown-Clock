@@ -3,8 +3,6 @@
 #include "init.h"
 #include "display_decode.h"
 #include "callback.h"
-// #include "messageloop.h"
-#include "state_control.h"
 #include "main_loop.h"
 
 void main()
