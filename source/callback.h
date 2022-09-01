@@ -48,17 +48,22 @@ void init_callbacks();
 
 //================
 
-#define BUTTON_DISPATCH(enumBtn, funcDown)     \
+#define BUTTON_DISPATCH(enumBtn, funcUp, funcDown) \
+    key_state = GetKeyAct(enumBtn);                \
+    if (key_state == enumKeyPress)                 \
+        funcDown();                                \
+    else if (key_state == enumKeyRelease)          \
+        funcUp();
+
+#define NAVADC_DISPATCH(enumBtn, funcDown)     \
     if (GetAdcNavAct(enumBtn) == enumKeyPress) \
         funcDown();
-// else if (GetAdcNavAct(enumBtn) == enumKeyRelease)
-//     funcUp();
 
-#define BUTTON_DISPATCH_WITH_UP(enumBtn, funcUp, funcDown) \
-    key_state = GetAdcNavAct(enumBtn);                           \
-    if (key_state == enumKeyPress)                               \
+#define NAVADC_DISPATCH_WITH_UP(enumBtn, funcUp, funcDown) \
+    key_state = GetAdcNavAct(enumBtn);                     \
+    if (key_state == enumKeyPress)                         \
         funcDown();                                        \
-    else if (key_state == enumKeyRelease)                        \
+    else if (key_state == enumKeyRelease)                  \
         funcUp();
 
 void __on_button();

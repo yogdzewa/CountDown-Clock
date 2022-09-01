@@ -28,26 +28,18 @@ void init_callbacks()
 
 void __on_button()
 {
-    u_byte keyact = GetKeyAct(enumKey2);
-    if (keyact == enumKeyPress)
-        on_btn2_down();
-    else if (keyact == enumKeyRelease)
-        on_btn2_up();
-
-    keyact = GetKeyAct(enumKey1);
-    if (keyact == enumKeyPress)
-        on_btn1_down();
-    else if (keyact == enumKeyRelease)
-        on_btn1_up();
+    u_byte key_state;
+    BUTTON_DISPATCH(enumKey1, on_btn1_up, on_btn1_down);
+    BUTTON_DISPATCH(enumKey2, on_btn2_up, on_btn2_down);
 }
 
 void __on_nav()
 {
     u_byte key_state;
-    BUTTON_DISPATCH(enumAdcNavKey3, on_btn3_down);
-    BUTTON_DISPATCH(enumAdcNavKeyCenter, on_nav_down);
-    BUTTON_DISPATCH_WITH_UP(enumAdcNavKeyDown, on_downbtn_up, on_downbtn_down);
-    BUTTON_DISPATCH(enumAdcNavKeyUp, on_upbtn_down);
-    BUTTON_DISPATCH(enumAdcNavKeyLeft, on_leftbtn_down);
-    BUTTON_DISPATCH(enumAdcNavKeyRight, on_rightbtn_down);
+    NAVADC_DISPATCH(enumAdcNavKey3, on_btn3_down);
+    NAVADC_DISPATCH(enumAdcNavKeyCenter, on_nav_down);
+    NAVADC_DISPATCH_WITH_UP(enumAdcNavKeyDown, on_downbtn_up, on_downbtn_down);
+    NAVADC_DISPATCH(enumAdcNavKeyUp, on_upbtn_down);
+    NAVADC_DISPATCH(enumAdcNavKeyLeft, on_leftbtn_down);
+    NAVADC_DISPATCH(enumAdcNavKeyRight, on_rightbtn_down);
 }
