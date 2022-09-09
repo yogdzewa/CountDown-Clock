@@ -44,6 +44,8 @@ extern XDATA uchar TIME_RELD_S;
 extern XDATA uchar TIME_REST_M;
 extern int TIME_LIMIT_ALLSEC;
 
+extern short first;
+
 void init_callbacks();
 
 //================

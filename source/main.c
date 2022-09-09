@@ -4,6 +4,7 @@
 #include "display_decode.h"
 #include "callback.h"
 #include "main_loop.h"
+short first = 1;
 
 void main()
 {
@@ -11,12 +12,12 @@ void main()
 	init_callbacks();
 
 	MySTC_Init();
-	//init light base and clock base.
-	clock_base = RTC_Read();
-	light_base = adc_res.Rop;
+	// init light base and clock base.
 	while (1)
 	{
 		MySTC_OS();
+		if (first == 1)
+			clock_read_2sec(CLOCK_BASE), first = 0;
 		LED_rotate_disp();
 		SEG_disp();
 	}

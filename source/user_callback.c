@@ -11,7 +11,7 @@ bit set_time_flag;
 pdata struct_ADC adc_res;
 uchar adc_cnt;
 uint adc_acc;
-pdata uint light_base;
+pdata uint light_base = 0;
 pdata uint light_cur;
 uchar light_acc;
 bit time_out_flag; // time out led rotate indicator
@@ -36,11 +36,7 @@ XDATA uchar TIME_REST_M;
 // reset the timer start
 void on_btn1_down()
 {
-    clock_base = RTC_Read();
-    time_out_flag = time_stop_flag = 0;
-    clock_base_totalsec = ((clock_base.second & 0x70) >> 4) * 10 + (clock_base.second & 0x0F);
-    clock_base_totalsec += (((clock_base.minute & 0x70) >> 4) * 10 + (clock_base.minute & 0x0F)) * 60;
-    clock_base_totalsec += (((clock_base.hour & 0x70) >> 4) * 10 + (clock_base.hour & 0x0F)) * 3600;
+    clock_read_2sec(CLOCK_BASE);
     if (!rest_flag)
     {
         TIME_LIMIT_ALLSEC = TIME_RELD_H * 3600;
@@ -55,7 +51,6 @@ void on_btn1_down()
         Uart1Print("REST:", 5);
     }
 }
-#define dec(s, n) s##_array[n]
 void on_btn2_down()
 { // set Rop light base
     light_acc = 0;
@@ -188,10 +183,7 @@ void on_timer_100ms()
         return;
     if (!time_stop_flag)
     {
-        clock_cur = RTC_Read();
-        clock_cur_totalsec = ((clock_cur.second & 0x70) >> 4) * 10 + (clock_cur.second & 0x0F);
-        clock_cur_totalsec += (((clock_cur.minute & 0x70) >> 4) * 10 + (clock_cur.minute & 0x0F)) * 60;
-        clock_cur_totalsec += (((clock_cur.hour & 0x70) >> 4) * 10 + (clock_cur.hour & 0x0F)) * 3600;
+        clock_read_2sec(CLOCK_CUR);
         // following function modifies @time_diff_tmp variable
         time_diff_count_down();
         timer_array[1] = time_diff_tmp.second / 10;
@@ -253,6 +245,8 @@ void on_event_adc()
     adc_res = GetADC();
     if (!light_sensor_flag)
         return;
+    if (light_base == 0 && first <= 15)
+        light_base = adc_res.Rop, first++;
     adc_cnt++;
     if (adc_cnt == 30)
     {
