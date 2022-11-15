@@ -53,9 +53,9 @@ def tray_create(serial_port: Serial):
     menu_options = (
         ("Reboot", None, reboot),
         ("Shutdown All", None, shutdown_all),
+        ("Light Sensor Switch", None, toggle_light_sensor),
         ("Reset", None, reset),
         ("Clock Switch", None, toggle_clock_switch),
-        ("Light Sensor Switch", None, toggle_light_sensor),
         ("Mode Change", None, change_mode))
     systray = SysTrayIcon("D:\\ico\\1.ico", "Countdown Clock",
                           menu_options=menu_options, default_menu_index=6, on_quit=tray_exit,
