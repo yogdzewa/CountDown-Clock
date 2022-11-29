@@ -224,7 +224,10 @@ void on_timer_100ms()
     // judge Rop diff
     if (light_sensor_flag)
         if (((int)light_base - (int)light_cur > 10))
-            light_acc++;
+        {
+            if (++light_acc > 14)
+                pc_connect_flag = startup_flag = 0;
+        }
         else
         {
             if (light_acc >= 2 && light_acc <= 6)
