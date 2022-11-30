@@ -58,6 +58,6 @@ def tray_create(serial_port: Serial):
         ("Clock Switch", None, toggle_clock_switch),
         ("Mode Change", None, change_mode))
     systray = SysTrayIcon("D:\\ico\\1.ico", "Countdown Clock",
-                          menu_options=menu_options, default_menu_index=6, on_quit=shutdown_all,
+                          menu_options=menu_options, default_menu_index=6, on_quit=tray_exit,
                           tmp_arg=serial_port)
     systray.start()

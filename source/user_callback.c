@@ -180,7 +180,12 @@ void on_sensor_vib()
 void on_timer_100ms()
 {
     if (!startup_flag)
-        return;
+    {
+        if (adc_res.Rop >= 27)
+            startup_flag = 1, rest_flag = light_acc = 0, light_base = adc_res.Rop, on_btn1_down();
+        else
+            return;
+    }
     if (!time_stop_flag)
     {
         clock_read_2sec(CLOCK_CUR);
