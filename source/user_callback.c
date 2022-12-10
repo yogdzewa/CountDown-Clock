@@ -211,7 +211,7 @@ void on_timer_100ms()
 #ifndef BEEP_MUTE
                     SetBeep(5000, 20);
 #else
-                    SetBeep(30, 2);
+                    // SetBeep(30, 2);
 #endif
                 }
                 else
@@ -220,7 +220,7 @@ void on_timer_100ms()
 #ifndef BEEP_MUTE
                     SetBeep(5000, 1);
 #else
-                    SetBeep(30, 2);
+                    // SetBeep(30, 2);
 #endif
                 }
             }
