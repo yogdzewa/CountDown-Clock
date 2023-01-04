@@ -57,4 +57,8 @@ void global_init()
 
     // Vibration detector
     VibInit();
+
+    //beep mute and auto shutdown state init(read from M24C02)
+    beep_mute_flag = (bit)(M24C02_Read(4) >> 7);
+    auto_switch_flag = (bit)(M24C02_Read(5) >> 7);
 }

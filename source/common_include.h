@@ -17,7 +17,7 @@ typedef unsigned char uchar;
 #endif
 
 //for beep mode
-#define BEEP_MUTE
+#define BEEP_MUTE ((char)0)
 
 
 

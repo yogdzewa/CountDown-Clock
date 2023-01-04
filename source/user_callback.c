@@ -27,7 +27,9 @@ bit rest_time_adjust_flag;
 bit startup_flag = 1;
 bit light_sensor_flag = 1;
 bit pc_connect_flag;
-XDATA uchar recvinfo[10] = {0};
+bit beep_mute_flag;
+bit auto_switch_flag;
+XDATA uchar recvinfo[10] = { 0 };
 // used for reset value
 XDATA uchar TIME_RELD_H;
 XDATA uchar TIME_RELD_M;
@@ -51,14 +53,16 @@ void on_btn1_down()
         Uart1Print("REST:", 5);
     }
 }
-void on_btn2_down()
-{ // set Rop light base
-    light_acc = 0;
-    light_base = adc_res.Rop;
-    light_array[2] = light_base / 100;
-    light_array[1] = light_base % 100 / 10;
-    light_array[0] = light_base % 10;
-    seg_rop_flag = 1;
+void on_btn2_down() {
+    light_sensor_flag = ~light_sensor_flag;
+    if (light_sensor_flag) {
+        light_acc = 0;
+        light_base = adc_res.Rop;
+        light_array[2] = light_base / 100;
+        light_array[1] = light_base % 100 / 10;
+        light_array[0] = light_base % 10;
+        seg_rop_flag = 1;
+    }
 }
 void on_btn2_up() { seg_rop_flag = 0; }
 void on_btn3_down()
@@ -108,16 +112,11 @@ void on_downbtn_down()
         TIME_REST_M = (RTIME_ABSTRACT < (uchar)60) ? RTIME_ABSTRACT : ((uchar)60 + RTIME_ABSTRACT);
     else
     {
-        light_sensor_flag = ~light_sensor_flag;
-        if (light_sensor_flag)
-            on_btn2_down();
+        M24C02_Write(4, (beep_mute_flag = ~beep_mute_flag));
+        beep_mute_flag ? SetBeep(30, 2) : SetBeep(5000, 2);
     }
 }
-void on_downbtn_up()
-{
-    if (light_sensor_flag)
-        seg_rop_flag = 0;
-}
+void on_downbtn_up() { return; }
 void on_upbtn_down()
 {
     if (seg_time_adjust_flag)
@@ -153,6 +152,10 @@ void on_rightbtn_down()
         rest_time_adjust_flag = seg_time_adjust_flag;
         seg_time_adjust_flag = ~seg_time_adjust_flag;
     }
+    else {
+        M24C02_Write(5, (auto_switch_flag = ~auto_switch_flag));
+        auto_switch_flag ? SetBeep(5000, 2) : SetBeep(30, 2);
+    }
 }
 
 #undef TIME_ADD
@@ -161,19 +164,12 @@ void on_rightbtn_down()
 #undef TIME_ABSTRACT
 void on_sensor_vib()
 {
+    char interval = rest_flag ? 2 : 5;
     SetBeep(30, 1);
-    if (!rest_flag)
-        if (TIME_LIMIT_ALLSEC - 5 * 60 >= 0)
-            TIME_LIMIT_ALLSEC -= 5 * 60;
-        else
-            TIME_LIMIT_ALLSEC %= 60;
+    if (TIME_LIMIT_ALLSEC - interval * 60 >= 0)
+        TIME_LIMIT_ALLSEC -= interval * 60;
     else
-    {
-        if (TIME_LIMIT_ALLSEC - 2 * 60 >= 0)
-            TIME_LIMIT_ALLSEC -= 2 * 60;
-        else
-            TIME_LIMIT_ALLSEC %= 60;
-    }
+        TIME_LIMIT_ALLSEC %= 60;
 }
 
 // read real time clock, and calc the diff time.
@@ -181,7 +177,7 @@ void on_timer_100ms()
 {
     if (!startup_flag)
     {
-        if (adc_res.Rop >= 27)
+        if (adc_res.Rop >= 27 && auto_switch_flag)
             startup_flag = 1, rest_flag = light_acc = 0, light_base = adc_res.Rop, on_btn1_down();
         else
             return;
@@ -208,20 +204,12 @@ void on_timer_100ms()
                 if (rest_flag)
                 {
                     Uart1Print("RTOU:", 5); // rest TIMEOUT
-#ifndef BEEP_MUTE
-                    SetBeep(5000, 20);
-#else
-                    // SetBeep(30, 2);
-#endif
+                    beep_mute_flag ? SetBeep(30, 2) : SetBeep(5000, 20);
                 }
                 else
                 {
                     Uart1Print("NTOU:", 5); // normal TIMEOUT
-#ifndef BEEP_MUTE
-                    SetBeep(5000, 1);
-#else
-                    // SetBeep(30, 2);
-#endif
+                    beep_mute_flag ? BEEP_MUTE : SetBeep(5000, 1);
                 }
             }
         }
@@ -284,20 +272,12 @@ void on_uart1_rx()
         pc_connect_flag = 1;
     } // reset to rest countdown
     else if (!strncmp(recvinfo + 2, "RRST", 4))
-#ifndef BEEP_MUTE
-        rest_flag = ~rest_flag, SetBeep(5000, 5), on_btn1_down();
-#else
         rest_flag = ~rest_flag, SetBeep(30, 2), on_btn1_down();
-#endif
     else if (!strncmp(recvinfo + 2, "RSET", 4))
         on_btn1_down();
     // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
-#ifndef BEEP_MUTE
-        SetBeep(400, 100);
-#else
-        SetBeep(30, 2);
-#endif
+        beep_mute_flag ? SetBeep(30, 2) : SetBeep(400, 100);
     else if (!strncmp(recvinfo + 2, "TLIG", 4))
     {
         if (tlig)
