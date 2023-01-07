@@ -277,7 +277,7 @@ void on_uart1_rx()
         on_btn1_down();
     // beep for a relative long time.
     else if (!strncmp(recvinfo + 2, "BEEP", 4))
-        beep_mute_flag ? SetBeep(30, 2) : SetBeep(400, 100);
+        time_out_flag ? (beep_mute_flag ? SetBeep(30, 2) : SetBeep(400, 100)) : BEEP_MUTE;
     else if (!strncmp(recvinfo + 2, "TLIG", 4))
     {
         if (tlig)
