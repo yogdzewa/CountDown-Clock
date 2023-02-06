@@ -37,12 +37,12 @@ void SEG_disp()
         Seg7Print(dec_l(2), dec_l(1), dec_l(0), 20, 20, dec_l(5), dec_l(4), dec_l(3));
         return;
     }
-    if (seg_time_adjust_flag)
+    if (work_time_adjust_flag)
     {
         Seg7Print(
-            TIME_RELD_H / 10, TIME_RELD_H % 10, 21,
-            TIME_RELD_M / 10, TIME_RELD_M % 10, 21,
-            TIME_RELD_S / 10, TIME_RELD_S % 10);
+            TIME_WORK_H / 10, TIME_WORK_H % 10, 21,
+            TIME_WORK_M / 10, TIME_WORK_M % 10, 21,
+            TIME_WORK_S / 10, TIME_WORK_S % 10);
         return;
     }
     if (rest_time_adjust_flag)

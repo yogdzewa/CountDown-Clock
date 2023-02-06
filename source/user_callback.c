@@ -2,6 +2,7 @@
 #include "help_func.h"
 #include "display_decode.h"
 #include "callback.h"
+#include "init.h"
 uchar led_pos = 1;
 pdata struct_DS1302_RTC clock_base;
 pdata struct_DS1302_RTC clock_cur;
@@ -21,7 +22,7 @@ uchar light_array[6]; // seg display register
 uchar timer_array[6]; // seg dispaly register
 struct_time_diff time_diff_tmp;
 bit vibra_flag;
-bit seg_time_adjust_flag;
+bit work_time_adjust_flag;
 bit rest_flag;
 bit rest_time_adjust_flag;
 bit startup_flag = 1;
@@ -31,19 +32,20 @@ bit beep_mute_flag;
 bit auto_switch_flag;
 XDATA uchar recvinfo[10] = { 0 };
 // used for reset value
-XDATA uchar TIME_RELD_H;
-XDATA uchar TIME_RELD_M;
-XDATA uchar TIME_RELD_S;
+XDATA uchar TIME_WORK_H;
+XDATA uchar TIME_WORK_M;
+XDATA uchar TIME_WORK_S;
 XDATA uchar TIME_REST_M;
 // reset the timer start
 void on_btn1_down()
 {
     clock_read_2sec(CLOCK_BASE);
+    DS1302Init(time);
     if (!rest_flag)
     {
-        TIME_LIMIT_ALLSEC = TIME_RELD_H * 3600;
-        TIME_LIMIT_ALLSEC += TIME_RELD_M * 60;
-        TIME_LIMIT_ALLSEC += TIME_RELD_S;
+        TIME_LIMIT_ALLSEC = TIME_WORK_H * 3600;
+        TIME_LIMIT_ALLSEC += TIME_WORK_M * 60;
+        TIME_LIMIT_ALLSEC += TIME_WORK_S;
         Uart1Print("NOML:", 5);
     }
     else
@@ -67,22 +69,22 @@ void on_btn2_down() {
 void on_btn2_up() { seg_rop_flag = 0; }
 void on_btn3_down()
 { // adjust time interval
-    seg_time_adjust_flag = 1;
+    work_time_adjust_flag = 1;
     rest_time_adjust_flag = 0;
 }
 void on_nav_down()
 {
-    if (seg_time_adjust_flag || rest_time_adjust_flag)
+    if (work_time_adjust_flag || rest_time_adjust_flag)
     {
-        seg_time_adjust_flag = rest_time_adjust_flag = 0;
+        work_time_adjust_flag = rest_time_adjust_flag = 0;
         // store TIME_RELD_** into M24C02
         // H -> 0x00, M -> 0x01, S -> 0x02, REST_M -> 0x03
         // the time interval is critical, so use delay function.
-        M24C02_Write(0, TIME_RELD_H);
+        M24C02_Write(0, TIME_WORK_H);
         delay_ms(10);
-        M24C02_Write(1, TIME_RELD_M);
+        M24C02_Write(1, TIME_WORK_M);
         delay_ms(10);
-        M24C02_Write(2, TIME_RELD_S);
+        M24C02_Write(2, TIME_WORK_S);
         delay_ms(10);
         M24C02_Write(3, TIME_REST_M);
         on_btn1_down();
@@ -97,16 +99,16 @@ void on_nav_down()
 }
 #define TIME_INTERVAL 5
 #define RTIME_INTERVAL 2
-#define TIME_ADD (TIME_RELD_M + TIME_INTERVAL)
-#define TIME_ABSTRACT (TIME_RELD_M - TIME_INTERVAL)
+#define TIME_ADD (TIME_WORK_M + TIME_INTERVAL)
+#define TIME_ABSTRACT (TIME_WORK_M - TIME_INTERVAL)
 #define RTIME_ABSTRACT (TIME_REST_M - RTIME_INTERVAL)
 #define RTIME_ADD (TIME_REST_M + RTIME_INTERVAL)
 void on_downbtn_down()
 {
-    if (seg_time_adjust_flag)
+    if (work_time_adjust_flag)
     {
-        TIME_RELD_M = (TIME_ABSTRACT < (uchar)60) ? TIME_ABSTRACT : (TIME_RELD_H--, ((uchar)60 + TIME_ABSTRACT));
-        TIME_RELD_H = TIME_RELD_H % 55;
+        TIME_WORK_M = (TIME_ABSTRACT < (uchar)60) ? TIME_ABSTRACT : (TIME_WORK_H--, ((uchar)60 + TIME_ABSTRACT));
+        TIME_WORK_H = TIME_WORK_H % 55;
     }
     else if (rest_time_adjust_flag)
         TIME_REST_M = (RTIME_ABSTRACT < (uchar)60) ? RTIME_ABSTRACT : ((uchar)60 + RTIME_ABSTRACT);
@@ -119,10 +121,10 @@ void on_downbtn_down()
 void on_downbtn_up() { return; }
 void on_upbtn_down()
 {
-    if (seg_time_adjust_flag)
+    if (work_time_adjust_flag)
     {
-        TIME_RELD_M = (TIME_ADD < (uchar)60) ? TIME_ADD : (TIME_RELD_H++, (TIME_ADD - (uchar)60));
-        TIME_RELD_H = TIME_RELD_H % 55;
+        TIME_WORK_M = (TIME_ADD < (uchar)60) ? TIME_ADD : (TIME_WORK_H++, (TIME_ADD - (uchar)60));
+        TIME_WORK_H = TIME_WORK_H % 55;
     }
     else if (rest_time_adjust_flag)
         TIME_REST_M = (RTIME_ADD < (uchar)60) ? RTIME_ADD : (RTIME_ADD - (uchar)60);
@@ -137,25 +139,25 @@ void on_upbtn_down()
 }
 void on_leftbtn_down()
 {
-    if (rest_time_adjust_flag | seg_time_adjust_flag)
+    if (rest_time_adjust_flag | work_time_adjust_flag)
     {
-        rest_time_adjust_flag = seg_time_adjust_flag;
-        seg_time_adjust_flag = ~seg_time_adjust_flag;
-    }
-    else
-        rest_flag = ~rest_flag, on_btn1_down();
-}
-void on_rightbtn_down()
-{
-    if (rest_time_adjust_flag | seg_time_adjust_flag)
-    {
-        rest_time_adjust_flag = seg_time_adjust_flag;
-        seg_time_adjust_flag = ~seg_time_adjust_flag;
+        rest_time_adjust_flag = work_time_adjust_flag;
+        work_time_adjust_flag = ~work_time_adjust_flag;
     }
     else {
         M24C02_Write(5, (auto_switch_flag = ~auto_switch_flag));
         auto_switch_flag ? SetBeep(5000, 2) : SetBeep(30, 2);
     }
+}
+void on_rightbtn_down()
+{
+    if (rest_time_adjust_flag | work_time_adjust_flag)
+    {
+        rest_time_adjust_flag = work_time_adjust_flag;
+        work_time_adjust_flag = ~work_time_adjust_flag;
+    }
+    else
+        rest_flag = ~rest_flag, on_btn1_down();
 }
 
 #undef TIME_ADD

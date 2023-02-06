@@ -30,7 +30,7 @@ extern uchar light_array[6]; // seg display register
 extern uchar timer_array[6]; // seg dispaly register
 extern struct_time_diff time_diff_tmp;
 extern bit vibra_flag;
-extern bit seg_time_adjust_flag;
+extern bit work_time_adjust_flag;
 extern bit rest_flag;
 extern bit rest_time_adjust_flag;
 extern bit startup_flag;
@@ -40,9 +40,9 @@ extern bit beep_mute_flag;
 extern bit auto_switch_flag;
 extern XDATA uchar recvinfo[10];
 
-extern XDATA uchar TIME_RELD_H;
-extern XDATA uchar TIME_RELD_M;
-extern XDATA uchar TIME_RELD_S;
+extern XDATA uchar TIME_WORK_H;
+extern XDATA uchar TIME_WORK_M;
+extern XDATA uchar TIME_WORK_S;
 extern XDATA uchar TIME_REST_M;
 extern int TIME_LIMIT_ALLSEC;
 

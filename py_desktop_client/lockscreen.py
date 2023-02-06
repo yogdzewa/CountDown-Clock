@@ -24,8 +24,8 @@ def main():
         pipe = Serial(ports_list[0].name, 28800)
     except BaseException: # exit
         showerror(
-            f'{ports_list[0].name} permission denied!\nMaybe other process \
-is running.\nNow exiting...')
+            f'{ports_list[0].name} permission denied!\nMaybe other process\
+ is running.\nNow exiting...')
         _exit(1)  # prevent previous line not working
 
     header = b'\xaa\x55'
@@ -37,8 +37,8 @@ is running.\nNow exiting...')
         pipe.timeout = None
         try:
             recvinfo = pipe.read_until(b':')
-            if(recvinfo == None):
-                continue
+            #if(recvinfo == None):
+                #continue
             # print('recvinfo: ', recvinfo)
             if(recvinfo == b'NTOU:'):
                 pipe.timeout = 60
@@ -70,9 +70,10 @@ is running.\nNow exiting...')
                         break
                     pipe.write(header+b'BEEP')
             elif(recvinfo == b'STOP:'):
-                showinfo('QUIT CURRENT PROCESS!')
-                pipe.write(header+b'DISC')
-                _exit(1)
+                # showinfo('QUIT CURRENT PROCESS!')
+                # pipe.write(header+b'DISC')
+                # _exit(1)
+                continue
         except SerialException as err:
             if 'Permission' in err.args[0]:
                 showwarning(
