@@ -4,7 +4,6 @@
 #include "callback.h"
 #include "init.h"
 uchar led_pos = 1;
-pdata struct_DS1302_RTC clock_base;
 pdata struct_DS1302_RTC clock_cur;
 uint clock_base_totalsec;
 uint clock_cur_totalsec;
@@ -39,8 +38,8 @@ XDATA uchar TIME_REST_M;
 // reset the timer start
 void on_btn1_down()
 {
-    clock_read_2sec(CLOCK_BASE);
     DS1302Init(time);
+    clock_read_2sec(CLOCK_BASE);
     if (!rest_flag)
     {
         TIME_LIMIT_ALLSEC = TIME_WORK_H * 3600;
@@ -77,7 +76,7 @@ void on_nav_down()
     if (work_time_adjust_flag || rest_time_adjust_flag)
     {
         work_time_adjust_flag = rest_time_adjust_flag = 0;
-        // store TIME_RELD_** into M24C02
+        // store TIME_WORK** into M24C02
         // H -> 0x00, M -> 0x01, S -> 0x02, REST_M -> 0x03
         // the time interval is critical, so use delay function.
         M24C02_Write(0, TIME_WORK_H);

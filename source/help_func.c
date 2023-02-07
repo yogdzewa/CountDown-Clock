@@ -31,13 +31,7 @@ void clock_read_2sec(bit t)
         clock_cur_totalsec += (((clock_cur.hour & 0x70) >> 4) * 10 + (clock_cur.hour & 0x0F)) * 3600;
     }
     else
-    {
-        clock_base = RTC_Read();
-        time_out_flag = time_stop_flag = 0;
-        clock_base_totalsec = ((clock_base.second & 0x70) >> 4) * 10 + (clock_base.second & 0x0F);
-        clock_base_totalsec += (((clock_base.minute & 0x70) >> 4) * 10 + (clock_base.minute & 0x0F)) * 60;
-        clock_base_totalsec += (((clock_base.hour & 0x70) >> 4) * 10 + (clock_base.hour & 0x0F)) * 3600;
-    }
+        clock_base_totalsec = time_out_flag = time_stop_flag = 0;
 }
 
 void delay_ms(uint n)
