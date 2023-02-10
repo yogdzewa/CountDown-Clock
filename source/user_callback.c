@@ -178,7 +178,7 @@ void on_timer_100ms()
 {
     if (!startup_flag)
     {
-        if (adc_res.Rop >= 27 && auto_switch_flag)
+        if (adc_res.Rop >= 27 && auto_switch_flag && light_sensor_flag)
             startup_flag = 1, rest_flag = light_acc = 0, light_base = adc_res.Rop, on_btn1_down();
         else
             return;
