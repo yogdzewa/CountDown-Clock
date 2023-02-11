@@ -113,7 +113,7 @@ void on_downbtn_down()
         TIME_REST_M = (RTIME_ABSTRACT < (uchar)60) ? RTIME_ABSTRACT : ((uchar)60 + RTIME_ABSTRACT);
     else
     {
-        M24C02_Write(4, (beep_mute_flag = ~beep_mute_flag));
+        M24C02_Write(4, (beep_mute_flag = ~beep_mute_flag) & 1);
         beep_mute_flag ? SetBeep(30, 2) : SetBeep(5000, 2);
     }
 }
@@ -144,7 +144,7 @@ void on_leftbtn_down()
         work_time_adjust_flag = ~work_time_adjust_flag;
     }
     else {
-        M24C02_Write(5, (auto_switch_flag = ~auto_switch_flag));
+        M24C02_Write(5, (auto_switch_flag = ~auto_switch_flag) & 1);
         auto_switch_flag ? SetBeep(5000, 2) : SetBeep(30, 2);
     }
 }
